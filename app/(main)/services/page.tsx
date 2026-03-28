@@ -20,8 +20,9 @@ export default async function Services() {
   const services = await getServices();
 
   return (
-    <div className="px-[15%]">
-      <div className="w-[55%] py-20">
+    <div className="px-20 py-10">
+      <p>BREADCRUMBS</p>
+      <div className="w-[55%] py-8">
         <h1 className="text-6xl font-semibold">
           Curated Sanctuaries for <i className="text-secondary-foreground">Modern Living</i>
         </h1>
@@ -30,8 +31,12 @@ export default async function Services() {
           Discover a level of clean that prioritizes your health and the environment.
         </p>
       </div>
+      <div className="flex gap-5 w-full">
+        <div className="bg-white p-5 flex-1">
+
+        </div>
       {services ? (
-        <div className="grid auto-rows-fr grid-cols-3 gap-6">
+        <div className="grid auto-rows-fr grid-cols-3 gap-6 w-[75%]">
           {services.map((service: Service) => (
             <div
               key={service.id}
@@ -68,7 +73,7 @@ export default async function Services() {
         </div>
       ) : (
         <div>Something went wrong</div>
-      )}
+      )}</div>
     </div>
   );
 }

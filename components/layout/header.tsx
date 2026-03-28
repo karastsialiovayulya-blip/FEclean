@@ -31,9 +31,12 @@ export default function Header() {
 
   return (
     <header className="relative flex w-full items-center justify-between bg-white px-[10%] py-5">
-      <h3 className="text-secondary-foreground text-lg font-bold">Lumina Clean</h3>
+      <h3 className="text-xl font-bold">
+        <span className="text-primary">Lumina</span>
+        <span className="uppercase">Clean</span>
+      </h3>
       <div className="absolute right-0 left-0 flex justify-center">
-        <nav className="text-secondary-foreground flex gap-12">
+        <nav className="text-primary flex gap-12">
           {links.map((link, index) => (
             <Link
               href={link.href}
