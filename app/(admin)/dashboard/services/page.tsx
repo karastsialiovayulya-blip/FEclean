@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Service } from "@/lib/types/types";
-import { Delete02Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import MultipleDelete from "@/components/multipleDelete";
 import CreateService from "@/components/popups/createService";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -21,6 +19,22 @@ import {
 export default function Services() {
   const [services, setServices] = useState<Service[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [serviceToEdit, setServiceToEdit] = useState<Service | null>(null);
+  const [selectedServices, setSelectedServices] = useState<number[]>([]);
+  const [isSelectedMode, setSelectedMode] = useState(false);
+
+  const deleteServices = async () => {
+    const responce = await fetch("http://localhost:8080/services", {
+      method: "DELETE",
+      body: JSON.stringify(selectedServices),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (responce.ok) {
+      console.log("services deleted");
+    }
+  };
 
   useEffect(() => {
     async function getService() {
@@ -44,20 +58,12 @@ export default function Services() {
         recurring appointments, and keep your service quality consistent — all through one
         integrated platform.
       </p>
-      <div className="mt-2 flex items-end justify-between py-2">
-        <div className="flex items-center gap-1">
-          <Switch />
-          <p>Selecting mode</p>
-        </div>
-        <Button
-          variant="destructive"
-          size="normal"
-          className="flex items-center gap-1"
-        >
-          <HugeiconsIcon icon={Delete02Icon} />
-          Delete
-        </Button>
-      </div>
+      <MultipleDelete
+        isSelectedMode={isSelectedMode}
+        setSelectedMode={setSelectedMode}
+        setSelected={setSelectedServices}
+        deleteSelected={deleteServices}
+      />
       <div className="flex h-[75vh] w-full flex-col justify-between rounded-lg border-3 bg-white p-4">
         <Table className="w-full table-fixed text-base">
           <TableCaption>A list of your recent services.</TableCaption>
@@ -71,16 +77,24 @@ export default function Services() {
           </TableHeader>
           <TableBody>
             {services.map((service) => (
-              <TableRow key={service.id}>
+              <TableRow
+                key={service.id}
+                onClick={() => {
+                  setIsPopupOpen(true);
+                  setServiceToEdit(service);
+                }}
+              >
                 <TableCell className="flex items-center gap-2 font-semibold">
-                  <div className="relative size-[5vh] flex-shrink-0">
-                    <Image
-                      src={service.featuredImage.url}
-                      fill={true}
-                      alt={service.featuredImage.alt}
-                      className="rounded-lg object-cover"
-                    />
-                  </div>
+                  {service.featuredImage && (
+                    <div className="relative size-[5vh] flex-shrink-0">
+                      <Image
+                        src={service.featuredImage.url}
+                        fill={true}
+                        alt={service.featuredImage.alt}
+                        className="rounded-lg object-cover"
+                      />
+                    </div>
+                  )}
                   {service.name}
                 </TableCell>
                 <TableCell className="whitespace-normal">{service.description}</TableCell>
@@ -99,7 +113,12 @@ export default function Services() {
           </Button>
         </div>
       </div>
-      {isPopupOpen && <CreateService setIsPopupOpen={setIsPopupOpen} />}
+      {isPopupOpen && (
+        <CreateService
+          setIsPopupOpen={setIsPopupOpen}
+          service={serviceToEdit}
+        />
+      )}
     </div>
   );
 }

@@ -3,29 +3,30 @@
 import { useEffect, useState } from "react";
 import { startTransition, useActionState } from "react";
 import Image from "next/image";
-import { uploadImageAction } from "@/lib/actions";
+import { deleteImagesAction, uploadImageAction } from "@/lib/actions";
 import { CleanImage } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { Cancel01Icon, Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import MultipleDelete from "@/components/multipleDelete";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 
 export default function Media() {
   const [preview, setPreview] = useState("");
   const [images, setImages] = useState<CleanImage[]>([]);
   const [state, formAction, isPending] = useActionState(uploadImageAction, null);
-  const [selectedImages, setSelectecImages] = useState<number[]>([]);
+  const [deleteState, deleteAction, isDeletePending] = useActionState(deleteImagesAction, null);
+  const [selectedImages, setSelectedImages] = useState<number[]>([]);
   const [isSelectedMode, setSelectedMode] = useState(false);
   const [imageToEdit, setImageToEdit] = useState<CleanImage | null>(null);
 
   const onSelect = (id: number) => {
     if (isSelectedMode) {
       if (selectedImages.includes(id)) {
-        setSelectecImages(selectedImages.filter((i) => i !== id));
-      } else setSelectecImages((prevState) => [...prevState, id]);
+        setSelectedImages(selectedImages.filter((i) => i !== id));
+      } else setSelectedImages((prevState) => [...prevState, id]);
       console.log(selectedImages);
     } else setImageToEdit(images.find((image) => image.id === id) || null);
   };
@@ -48,16 +49,9 @@ export default function Media() {
   };
 
   const deleteImages = async () => {
-    const responce = await fetch("http://localhost:8080/uploads/images", {
-      method: "DELETE",
-      body: JSON.stringify(selectedImages),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    startTransition(() => {
+      deleteAction(selectedImages);
     });
-    if (responce.ok) {
-      console.log("images deleted");
-    }
   };
 
   useEffect(() => {
@@ -69,17 +63,11 @@ export default function Media() {
       }
     }
     getImages();
-  }, [state]);
+  }, [deleteState, state]);
 
   useEffect(() => {
-    startTransition(() => {
-      setPreview("");
-
-      const formData = new FormData();
-      formData.append("actionType", "reset");
-      formAction(formData);
-    });
-  }, [state?.success, formAction]);
+    if (state?.success) setPreview("");
+  }, [state]);
 
   return (
     <div className="p-10">
@@ -166,49 +154,38 @@ export default function Media() {
           </div>
         </form>
       </div>
-      <div className="flex items-end justify-between py-2">
-        <div className="flex items-center gap-1">
-          <Switch
-            checked={isSelectedMode}
-            onClick={() => {
-              setSelectedMode(!isSelectedMode);
-              setSelectecImages([]);
-            }}
-          />
-          <p>Selecting mode</p>
-        </div>
-        <Button
-          onClick={deleteImages}
-          variant="destructive"
-          size="normal"
-          className="flex items-center gap-1"
-        >
-          <HugeiconsIcon icon={Delete02Icon} />
-          Delete
-        </Button>
-      </div>
+      <MultipleDelete
+        isSelectedMode={isSelectedMode}
+        setSelectedMode={setSelectedMode}
+        setSelected={setSelectedImages}
+        deleteSelected={deleteImages}
+      />
       <div className="flex flex-col gap-3 rounded-lg border-2 bg-white p-3">
-        <div className="grid w-full grid-cols-5 gap-3">
-          {images.map((image: CleanImage) => (
-            <div
-              key={image.id}
-              className={cn(
-                "rounded-lg bg-white p-3 transition-all hover:scale-105",
-                selectedImages.includes(image.id) && "bg-secondary",
-              )}
-              onClick={() => onSelect(image.id)}
-            >
-              <div className="relative aspect-square w-full">
-                <Image
-                  src={image.url}
-                  fill={true}
-                  alt={image.alt}
-                  className="rounded-lg object-cover"
-                />
+        {images.length > 0 ? (
+          <div className="grid w-full grid-cols-5 gap-3">
+            {images.map((image: CleanImage) => (
+              <div
+                key={image.id}
+                className={cn(
+                  "rounded-lg bg-white p-3 transition-all hover:scale-105",
+                  selectedImages.includes(image.id) && "bg-secondary",
+                )}
+                onClick={() => onSelect(image.id)}
+              >
+                <div className="relative aspect-square w-full">
+                  <Image
+                    src={image.url}
+                    fill={true}
+                    alt={image.alt}
+                    className="rounded-lg object-cover"
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex justify-center py-10">No images found</div>
+        )}
       </div>
       {imageToEdit && (
         <div className="fixed top-0 left-[20%] flex h-screen w-[80%] items-center justify-center bg-gray-700/20 backdrop-blur-sm">
@@ -241,7 +218,7 @@ export default function Media() {
                     placeholder="alt"
                     name="alt"
                     className="block w-[15vw] text-base"
-                    value={imageToEdit.alt}
+                    defaultValue={imageToEdit.alt}
                   />
                 </div>
                 <div className="flex flex-col gap-1">

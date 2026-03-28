@@ -14,18 +14,24 @@ export default function ImagesCarousel({ service }: { service: Service }) {
   return (
     <Carousel
       className="w-full"
-      onMouseEnter={() => plugin.current.play()}
+      onMouseEnter={() => {
+        if (service.images.length > 0) plugin.current.play();
+      }}
       onMouseLeave={() => plugin.current.stop()}
       plugins={[plugin.current]}
     >
       <CarouselContent>
         <CarouselItem>
           <div className="relative aspect-3/2 w-full">
-            <Image
-              src={service.featuredImage.url}
-              alt={service.featuredImage.alt}
-              fill={true}
-            />{" "}
+            {service.featuredImage ? (
+              <Image
+                src={service.featuredImage.url}
+                alt={service.featuredImage.alt}
+                fill={true}
+              />
+            ) : (
+              <div className="flex size-full items-center justify-center">No image :(</div>
+            )}
           </div>
         </CarouselItem>
         {service.images.map((image: CleanImage, index) => (
