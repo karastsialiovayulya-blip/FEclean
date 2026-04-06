@@ -26,7 +26,7 @@ export default function MultipleDelete({
             setSelected([]);
           }}
         />
-        <p>Selecting mode</p>
+        <p className="text-lg">Selecting mode</p>
       </div>
       <Button
         onClick={deleteSelected}

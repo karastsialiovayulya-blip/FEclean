@@ -1,6 +1,6 @@
 import { Mail01Icon, TelephoneIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { HeroSection } from "@/components/staticCards";
+import { HeroSection } from "@/components/sections/heroSections";
 
 const ContactInfoCard = ({ icon, title, children }: any) => (
   <div className="bg-background2 flex flex-col gap-4 rounded-lg p-8">
