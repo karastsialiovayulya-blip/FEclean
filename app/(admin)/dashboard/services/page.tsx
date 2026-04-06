@@ -154,7 +154,7 @@ excellence."
               {service.requirments.length > 0 && (
                 <div className="flex w-full gap-2 overflow-x-auto">
                   {service.requirments.map((requirment) => (
-                    <Tooltip>
+                    <Tooltip key={requirment.id}>
                       <TooltipTrigger>
                         {requirment.inventory?.featuredImage ? (
                           <div className="relative flex size-[7vh] flex-shrink-0 items-center justify-center">
