@@ -6,7 +6,7 @@ import Image from "next/image";
 import { deleteImagesAction, uploadImageAction } from "@/lib/actions";
 import { CleanImage } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
-import MultipleDelete from "@/components/multipleDelete";
+Developmentimport MultipleDelete from "@/components/multipleDelete";
 import EditMedia from "@/components/popups/editMedia";
 import { DashboardDescription } from "@/components/sections/heroSections";
 import { Button } from "@/components/ui/button";
