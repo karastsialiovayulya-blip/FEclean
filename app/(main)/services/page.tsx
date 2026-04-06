@@ -10,18 +10,23 @@ export const metadata: Metadata = {
 };
 
 async function getServices() {
-  const responce = await fetch("http://localhost:8080/services", { method: "GET" });
-  if (responce.ok) {
-    return await responce.json();
-  } else return null;
+  try {
+    const responce = await fetch("http://localhost:8080/services", { method: "GET" });
+    if (responce.ok) {
+      return await responce.json();
+    } else return null;
+  } catch (e) {
+    return null;
+  }
 }
 
 export default async function Services() {
   const services = await getServices();
 
   return (
-    <div className="px-[15%]">
-      <div className="w-[55%] py-20">
+    <div className="px-20 py-10">
+      <p>BREADCRUMBS</p>
+      <div className="w-[55%] py-8">
         <h1 className="text-6xl font-semibold">
           Curated Sanctuaries for <i className="text-secondary-foreground">Modern Living</i>
         </h1>
@@ -30,45 +35,48 @@ export default async function Services() {
           Discover a level of clean that prioritizes your health and the environment.
         </p>
       </div>
-      {services ? (
-        <div className="grid auto-rows-fr grid-cols-3 gap-6">
-          {services.map((service: Service) => (
-            <div
-              key={service.id}
-              className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-            >
-              <div className="overflow-hidden">
-                <ImagesCarousel service={service} />
-              </div>
-              <div className="flex flex-1 flex-col p-5">
-                <div className="flex items-start justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900 transition group-hover:text-green-700">
-                    {service.name}
-                  </h3>
+      <div className="flex w-full gap-5">
+        <div className="flex-1 bg-white p-5"></div>
+        {services ? (
+          <div className="grid w-[75%] auto-rows-fr grid-cols-3 gap-6">
+            {services.map((service: Service) => (
+              <div
+                key={service.id}
+                className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div className="overflow-hidden">
+                  <ImagesCarousel service={service} />
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900 transition group-hover:text-green-700">
+                      {service.name}
+                    </h3>
 
-                  <div className="text-lg font-bold text-green-600">
-                    {service.depedensOnArea && "From "}
-                    {service.price}$
+                    <div className="text-lg font-bold text-green-600">
+                      {service.depedensOnArea && "From "}
+                      {service.price}$
+                    </div>
+                  </div>
+                  <p className="mt-3 line-clamp-3 text-sm text-gray-500">{service.description}</p>
+                  <div className="mt-auto pt-5">
+                    <Link href={"/services/" + service.id}>
+                      <Button
+                        size="normal"
+                        className="w-full"
+                      >
+                        View Details
+                      </Button>
+                    </Link>
                   </div>
                 </div>
-                <p className="mt-3 line-clamp-3 text-sm text-gray-500">{service.description}</p>
-                <div className="mt-auto pt-5">
-                  <Link href={"/services/" + service.id}>
-                    <Button
-                      size="normal"
-                      className="w-full"
-                    >
-                      View Details
-                    </Button>
-                  </Link>
-                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div>Something went wrong</div>
-      )}
+            ))}
+          </div>
+        ) : (
+          <div className="w-[75%]">Something went wrong</div>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,7 +9,7 @@ interface MediaPopupProps {
   isMultiple: boolean;
   setIsPopupOpen: (open: boolean) => void;
   setSingleImage: (image: CleanImage | null) => void;
-  setSeveralImages: (image: CleanImage[]) => void;
+  setSeveralImages?: (image: CleanImage[]) => void;
 }
 
 export default function MediaPopup({
@@ -38,7 +38,7 @@ export default function MediaPopup({
         const foundImage = images.find((image) => image.id === id);
         if (foundImage) nextImages.push(foundImage);
       });
-      setSeveralImages(nextImages);
+      if (setSeveralImages) setSeveralImages(nextImages);
     } else {
       setSingleImage(images.find((image) => image.id === selectedImages[0]) || null);
     }
@@ -59,7 +59,7 @@ export default function MediaPopup({
   return (
     <BasePopup
       setIsPopupOpen={setIsPopupOpen}
-      width="w-[70%]"
+      width="w-[60%]"
     >
       <div className="grid w-full grid-cols-5 gap-3">
         {images.map((image: CleanImage) => (

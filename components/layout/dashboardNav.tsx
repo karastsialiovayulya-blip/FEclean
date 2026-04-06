@@ -21,7 +21,7 @@ export default function DashboardNav() {
   const links = [
     { href: "/dashboard", title: "Dashboard", icon: DashboardSquare02Icon },
     { href: "/dashboard/services", title: "Services", icon: CleanIcon },
-    { href: "/dashboard/inventory", title: "Invenory", icon: CleaningBucketIcon },
+    { href: "/dashboard/inventory", title: "Inventory", icon: CleaningBucketIcon },
     { href: "/dashboard/orders", title: "Orders", icon: VacuumCleanerIcon },
     { href: "/dashboard/users", title: "Users", icon: UserGroupIcon },
     { href: "/dashboard/media", title: "Media", icon: Image02Icon },
@@ -29,9 +29,9 @@ export default function DashboardNav() {
   ];
 
   return (
-    <div className="bg-secondary fixed flex h-screen w-[20%] flex-col justify-between border-r-3 px-7 py-8">
+    <div className="fixed flex h-screen w-[20%] flex-col justify-between border-r-3 px-7 py-8">
       <div className="flex flex-col gap-15">
-        <div className="gap-3 rounded-lg border-2 bg-white/80 p-3 transition-all hover:scale-105">
+        <div>
           <h2 className="text-secondary-foreground text-xl font-bold">Admin Portal</h2>
           <p className="uppercase">Managment suite</p>
         </div>
