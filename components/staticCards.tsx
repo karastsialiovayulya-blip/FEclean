@@ -11,15 +11,19 @@ interface ServiceCardProps {
   variant?: "primary" | "light";
 }
 
-interface HeroSectionProps {
-  h1: string;
-  p: string;
-  upperH1: any;
-  image: string;
-  highlight: string;
+interface ServiceCard02Props {
+  title: string;
+  upper: string;
+  icon: any;
 }
 
-export function Card01 ({ title, description, icon: Icon, tags, variant = "light" }: ServiceCardProps) {
+export function Card01({
+  title,
+  description,
+  icon: Icon,
+  tags,
+  variant = "light",
+}: ServiceCardProps) {
   const isPrimary = variant === "primary";
   const containerStyles = isPrimary ? "bg-primary text-white" : "bg-background text-foreground";
   const iconBgStyles = isPrimary ? "bg-white/10" : "bg-white shadow-sm";
@@ -54,49 +58,16 @@ export function Card01 ({ title, description, icon: Icon, tags, variant = "light
   );
 }
 
-
-export function HeroSection({ h1, p, image, upperH1, highlight }: HeroSectionProps) {
-  const parts = h1?.toString().split(new RegExp(`(${highlight})`, "gi"));
-
+export function Card02({ title, upper, icon }: ServiceCard02Props) {
   return (
-    <>
-      <section className="flex min-h-[90vh] px-20 py-30">
-        <div className="w-[45%]">
-          <Button
-            size="normal"
-            variant="secondary"
-            className="mb-10 font-light uppercase"
-          >
-            {upperH1}
-          </Button>
-          <h1 className="text-7xl font-bold">
-            {parts?.map((part, i) =>
-              part.toLowerCase() === highlight.toLowerCase() ? (
-                <span
-                  key={i}
-                  className="text-primary"
-                >
-                  {part}
-                </span>
-              ) : (
-                part
-              ),
-            )}
-          </h1>
-          <p className="mt-7 text-3xl">{p}</p>
-        </div>
-        <div className="relative flex flex-1 justify-end">
-          <div className="relative h-full w-[80%]">
-            <Image
-              src={image}
-              fill={true}
-              alt="hero image"
-              className="rounded-2xl object-cover shadow-xl"
-            />
-          </div>
-        </div>
-      </section>
-    </>
+    <div className="flex items-center gap-4 rounded-lg bg-white p-7 shadow-xs">
+      <div className="bg-secondary text-primary rounded-lg p-3">
+        <HugeiconsIcon icon={icon} />
+      </div>
+      <div>
+        <p className="">{upper}</p>
+        <h3 className="text-3xl font-bold">{title}</h3>
+      </div>
+    </div>
   );
 }
-

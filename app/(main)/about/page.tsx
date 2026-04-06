@@ -1,12 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
-import {
-  ClinicIcon,
-  HealtcareIcon,
-  Plant01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Card01, HeroSection } from "@/components/staticCards";
+import { ClinicIcon, HealtcareIcon, Plant01Icon } from "@hugeicons/core-free-icons";
+import { HeroSection } from "@/components/sections/heroSections";
+import { Card01 } from "@/components/staticCards";
 import { Button } from "@/components/ui/button";
 
 export default function About() {

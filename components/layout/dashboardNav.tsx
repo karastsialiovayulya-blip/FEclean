@@ -21,7 +21,7 @@ export default function DashboardNav() {
   const links = [
     { href: "/dashboard", title: "Dashboard", icon: DashboardSquare02Icon },
     { href: "/dashboard/services", title: "Services", icon: CleanIcon },
-    { href: "/dashboard/inventory", title: "Invenory", icon: CleaningBucketIcon },
+    { href: "/dashboard/inventory", title: "Inventory", icon: CleaningBucketIcon },
     { href: "/dashboard/orders", title: "Orders", icon: VacuumCleanerIcon },
     { href: "/dashboard/users", title: "Users", icon: UserGroupIcon },
     { href: "/dashboard/media", title: "Media", icon: Image02Icon },

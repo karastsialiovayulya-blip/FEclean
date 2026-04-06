@@ -3,18 +3,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Service } from "@/lib/types/types";
+import { AnalyticsUpIcon, CleaningBucketIcon, Money01Icon } from "@hugeicons/core-free-icons";
 import MultipleDelete from "@/components/multipleDelete";
+import AddInventoryPopupToService from "@/components/popups/addInventory";
 import CreateService from "@/components/popups/createService";
+import { DashboardDescription } from "@/components/sections/heroSections";
+import { Card02 } from "@/components/staticCards";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Services() {
   const [services, setServices] = useState<Service[]>([]);
@@ -22,6 +18,7 @@ export default function Services() {
   const [serviceToEdit, setServiceToEdit] = useState<Service | null>(null);
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
   const [isSelectedMode, setSelectedMode] = useState(false);
+  const [isAddInventoryPopupOpen, setAddInventoryPopupOpen] = useState(false);
 
   const deleteServices = async () => {
     const responce = await fetch("http://localhost:8080/services", {
@@ -48,74 +45,153 @@ export default function Services() {
       }
     }
     getService();
-  }, [isPopupOpen]);
+  }, [isPopupOpen, isAddInventoryPopupOpen]);
 
   return (
     <div className="p-10">
-      <h1 className="text-3xl font-semibold">Services</h1>
-      <p className="mt-1 w-[60%]">
-        Take full control of your cleaning business. Monitor team performance in real-time, automate
-        recurring appointments, and keep your service quality consistent — all through one
-        integrated platform.
-      </p>
+      <DashboardDescription
+        h1="Refine the Lumina Experience."
+        p="Manage your botanical and clinical cleaning offerings. Add new specialized
+packages or adjust existing tiers to maintain our clinical standard of
+excellence."
+        upperH1="Service Catalog"
+        highlight="Lumina "
+      >
+        <Button
+          size="normal"
+          onClick={() => {
+            setIsPopupOpen(true);
+            setServiceToEdit(null);
+          }}
+          className="w-[10vw] rounded-xl px-6 py-4 text-lg whitespace-normal"
+        >
+          Add new service
+        </Button>
+      </DashboardDescription>
+      <div className="grid grid-cols-3 gap-7 py-10">
+        <Card02
+          upper="Total Services"
+          title="24 Active"
+          icon={CleaningBucketIcon}
+        />
+        <Card02
+          upper="Avg. Price Point"
+          title="$185.00"
+          icon={Money01Icon}
+        />
+        <Card02
+          upper="Most Popular"
+          title="Botanical"
+          icon={AnalyticsUpIcon}
+        />
+      </div>
       <MultipleDelete
         isSelectedMode={isSelectedMode}
         setSelectedMode={setSelectedMode}
         setSelected={setSelectedServices}
         deleteSelected={deleteServices}
       />
-      <div className="flex h-[75vh] w-full flex-col justify-between rounded-lg border-3 bg-white p-4">
-        <Table className="w-full table-fixed text-base">
-          <TableCaption>A list of your recent services.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-1/5">Service</TableHead>
-              <TableHead className="w-auto">Description</TableHead>
-              <TableHead className="w-[100px]">Time</TableHead>
-              <TableHead className="w-[100px] text-right">Price</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {services.map((service) => (
-              <TableRow
-                key={service.id}
-                onClick={() => {
-                  setIsPopupOpen(true);
-                  setServiceToEdit(service);
-                }}
-              >
-                <TableCell className="flex items-center gap-2 font-semibold">
-                  {service.featuredImage && (
-                    <div className="relative size-[5vh] flex-shrink-0">
-                      <Image
-                        src={service.featuredImage.url}
-                        fill={true}
-                        alt={service.featuredImage.alt}
-                        className="rounded-lg object-cover"
-                      />
-                    </div>
-                  )}
-                  {service.name}
-                </TableCell>
-                <TableCell className="whitespace-normal">{service.description}</TableCell>
-                <TableCell>{service.time} min</TableCell>
-                <TableCell className="text-right">${service.price}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div>
-          <Button
-            size="normal"
-            onClick={() => setIsPopupOpen(true)}
+      <div className="bg-background2 flex w-full flex-col gap-4 rounded-lg p-4">
+        {services.map((service) => (
+          <div
+            key={service.id}
+            onClick={() => {
+              setIsPopupOpen(true);
+              setServiceToEdit(service);
+            }}
+            className="flex items-center gap-5 rounded-lg bg-white p-5"
           >
-            Add
-          </Button>
-        </div>
+            <div className="flex w-[40%] items-center gap-4 font-semibold">
+              <div className="relative size-[10vh] flex-shrink-0">
+                {service.featuredImage ? (
+                  <Image
+                    src={service.featuredImage.url}
+                    fill={true}
+                    alt={service.featuredImage.alt}
+                    className="rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex size-full items-center justify-center rounded-lg bg-gray-100 text-sm">
+                    No image ;(
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3>{service.name}</h3>
+                <p className="font-thin text-gray-500">{service.description}</p>
+              </div>
+            </div>
+            <div className="flex-1">
+              <p className="font-thin uppercase">Price</p>
+              <h3 className="text-lg font-bold">${service.price}</h3>
+            </div>
+            <div className="flex-1">
+              <p className="font-thin uppercase">Time</p>
+              <h3 className="text-lg font-bold">{service.time} min</h3>
+            </div>
+            <div className="flex-1">
+              <p className="font-thin uppercase">Status</p>
+              <h3 className="text-lg font-bold">later</h3>
+            </div>
+            <div
+              className="w-[30%]"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <p className="font-bold font-thin uppercase">Inventory</p>
+                <Button
+                  variant="secondary"
+                  onClick={(e) => {
+                    setAddInventoryPopupOpen(true);
+                    setServiceToEdit(service);
+                  }}
+                >
+                  +
+                </Button>
+              </div>
+              {service.requirments.length > 0 && (
+                <div className="flex w-full gap-2 overflow-x-auto">
+                  {service.requirments.map((requirment) => (
+                    <Tooltip key={requirment.id}>
+                      <TooltipTrigger>
+                        {requirment.inventory?.featuredImage ? (
+                          <div className="relative flex size-[7vh] flex-shrink-0 items-center justify-center">
+                            <Image
+                              src={requirment.inventory.featuredImage.url}
+                              fill={true}
+                              alt={requirment.inventory.featuredImage.alt}
+                              className="rounded object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex h-full max-w-36 items-center rounded bg-gray-100 px-2 text-sm">
+                            {requirment.inventory?.name}
+                          </div>
+                        )}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-sm">Needed quanity: {requirment.inventory?.amount}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        <div></div>
       </div>
       {isPopupOpen && (
         <CreateService
           setIsPopupOpen={setIsPopupOpen}
+          service={serviceToEdit}
+        />
+      )}
+      {isAddInventoryPopupOpen && serviceToEdit && (
+        <AddInventoryPopupToService
+          setIsPopupOpen={setAddInventoryPopupOpen}
           service={serviceToEdit}
         />
       )}
