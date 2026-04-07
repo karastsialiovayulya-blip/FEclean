@@ -1,4 +1,5 @@
 "use server";
+import { cookies } from "next/headers";
 
 export async function uploadImageAction(prevState: any, formData: FormData) {
   if (formData.get("actionType") === "reset") {
@@ -127,4 +128,76 @@ export async function editInventory(prevState: any, dataToSend: any) {
   } catch (error) {
     return { success: false, error: "Something went wrong" };
   }
+}
+
+export async function SignInAction(prevState: any, formData: FormData) {
+  try {
+    console.log(formData);
+    const data = Object.fromEntries(formData.entries());
+    const responce = await fetch("http://localhost:8080/auth/sign-in", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (responce.ok) {
+      const result = await responce.json();
+
+      const cookieStore = await cookies();
+      cookieStore.set("jwt_token", result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24,
+        path: "/",
+        sameSite: "lax",
+      });
+
+      return { success: true, user: result.user };
+    }
+
+    return { success: false, error: "Something went wrong" };
+  } catch (error) {
+    return { success: false, error: "Something went wrong" };
+  }
+}
+
+export async function SignUpAction(prevState: any, formData: FormData) {
+  try {
+    console.log(formData);
+    const data = Object.fromEntries(formData.entries());
+    const responce = await fetch("http://localhost:8080/auth/sign-up", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (responce.ok) {
+      const result = await responce.json();
+
+      const cookieStore = await cookies();
+      cookieStore.set("jwt_token", result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24,
+        path: "/",
+        sameSite: "lax",
+      });
+
+      return { success: true, user: result.user };
+    }
+
+    return { success: false, error: "Something went wrong" };
+  } catch (error) {
+    return { success: false, error: "Something went wrong" };
+  }
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("jwt_token");
+
+  return { success: true };
 }
