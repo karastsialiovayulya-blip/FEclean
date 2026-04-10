@@ -1,3 +1,4 @@
+import { success } from "zod";
 import { getAuthTokenAction } from "../utils";
 
 const API_BASE_URL = "http://localhost:8080";
@@ -10,10 +11,6 @@ async function getAuthToken() {
   }
 }
 
-type RequestOptions = RequestInit & {
-  isFormData?: boolean;
-};
-
 export interface IResponse<T> {
   pagination?: {
     current_page: number;
@@ -22,14 +19,17 @@ export interface IResponse<T> {
     total: number;
   };
   data: T;
-  errors: string[];
-  messages: string[];
+  error: string;
+  message: string;
   ok: boolean;
   status: number;
 }
 
-async function request(endpoint: string, options: RequestOptions = {}) {
-  const { headers, isFormData, ...restOptions } = options;
+export async function apiFetch<T>(
+  endpoint: string,
+  options: RequestInit = {},
+): Promise<IResponse<T>> {
+  const { headers, body, ...restOptions } = options;
   const authCookie = await getAuthToken();
 
   const requestHeaders = new Headers({
@@ -38,7 +38,7 @@ async function request(endpoint: string, options: RequestOptions = {}) {
     "ngrok-skip-browser-warning": "true",
   });
 
-  if (!isFormData) {
+  if (!(body instanceof FormData)) {
     requestHeaders.append("Content-Type", "application/json");
   }
 
@@ -54,10 +54,12 @@ async function request(endpoint: string, options: RequestOptions = {}) {
     ...restOptions,
     headers: requestHeaders,
     credentials: "include",
+    body: body instanceof FormData ? body : JSON.stringify(body),
   });
 
   const response = await fetch(request);
   const data = await response.json();
 
+  console.log(data);
   return { ...data, ok: response.ok, status: response.status };
 }
