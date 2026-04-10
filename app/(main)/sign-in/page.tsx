@@ -56,13 +56,16 @@ export default function SignIn() {
               onChange={handleChange}
             />
           </div>
-          <Button
-            size="normal"
-            type="submit"
-            disabled={isPending}
-          >
-            Sign in
-          </Button>
+          <div className="flex flex-col gap-1">
+            <Button
+              size="normal"
+              type="submit"
+              disabled={isPending}
+            >
+              Sign in
+            </Button>
+            <p className="text-center text-sm text-red-500">{stateIn?.message}</p>
+          </div>
         </form>
       </div>
     </div>

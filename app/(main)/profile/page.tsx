@@ -20,19 +20,19 @@ export default function Profile() {
 
   return (
     <div className="px-[15%] py-10">
-      <div className="flex items-end justify-between gap-12">
-        <div className="max-w-2xl">
+      <div className="flex items-end justify-between">
+        <div className="">
           <span className="text-primary font-label mb-4 block text-sm tracking-widest uppercase">
             Personal Sanctuary
           </span>
-          <h1 className="font-headline mb-6 text-5xl leading-none font-extrabold tracking-tighter md:text-6xl">
+          <h1 className="mb-6 text-5xl leading-none font-bold md:text-6xl">
             Welcome back,
             <br />
             <span className="text-primary">
               {user.firstName} {user.lastName}
             </span>
           </h1>
-          <p className="max-w-md text-lg leading-relaxed">
+          <p className="text-lg">
             Manage your botanical cleanings and profile settings. Your home's harmony is our highest
             priority.
           </p>
@@ -49,7 +49,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <div className="mt-20">
+      <div className="mt-15">
         <aside className="w-fit min-w-max">
           <section className="flex flex-col gap-5 rounded-xl bg-white p-8 transition-all duration-300 hover:translate-y-[-2px]">
             <h2 className="text-xl font-bold">Contact Information</h2>

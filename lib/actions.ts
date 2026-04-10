@@ -1,5 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
+import { error } from "console";
 
 export async function uploadImageAction(prevState: any, formData: FormData) {
   if (formData.get("actionType") === "reset") {
@@ -141,9 +142,8 @@ export async function SignInAction(prevState: any, formData: FormData) {
         "Content-Type": "application/json",
       },
     });
+    const result = await responce.json();
     if (responce.ok) {
-      const result = await responce.json();
-
       const cookieStore = await cookies();
       cookieStore.set("jwt_token", result.token, {
         httpOnly: true,
@@ -156,7 +156,7 @@ export async function SignInAction(prevState: any, formData: FormData) {
       return { success: true, user: result.user };
     }
 
-    return { success: false, error: "Something went wrong" };
+    return { success: false, error: result.error, message: result.message };
   } catch (error) {
     return { success: false, error: "Something went wrong" };
   }
@@ -173,9 +173,8 @@ export async function SignUpAction(prevState: any, formData: FormData) {
         "Content-Type": "application/json",
       },
     });
+    const result = await responce.json();
     if (responce.ok) {
-      const result = await responce.json();
-
       const cookieStore = await cookies();
       cookieStore.set("jwt_token", result.token, {
         httpOnly: true,
@@ -188,7 +187,7 @@ export async function SignUpAction(prevState: any, formData: FormData) {
       return { success: true, user: result.user };
     }
 
-    return { success: false, error: "Something went wrong" };
+    return { success: false, error: result.error, message: result.message };
   } catch (error) {
     return { success: false, error: "Something went wrong" };
   }

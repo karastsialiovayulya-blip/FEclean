@@ -7,7 +7,7 @@ export const getAuthTokenAction = async () => {
   const token = cookieStore.get("jwt_token");
 
   if (token) {
-    return `${token.name}=${token.value}`;
+    return token.value;
   } else {
     return false;
   }
