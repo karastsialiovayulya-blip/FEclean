@@ -33,3 +33,11 @@ export interface ServiceRequirements {
   inventory?: Inventory;
   requiredAmount: number;
 }
+
+export interface User {
+  id: number;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  username: string;
+}

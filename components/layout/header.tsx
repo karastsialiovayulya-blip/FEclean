@@ -1,6 +1,10 @@
 "use client";
+
+import { startTransition, useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logoutAction } from "@/lib/actions";
+import { userStore } from "@/lib/store/userStore";
 import { cn } from "@/lib/utils";
 import { Logout01Icon, UserIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -13,9 +17,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 export default function Header() {
   const pathname = usePathname();
+  const { isAuthenticated, logout } = userStore();
+  const [stateIn, logOutAction, isPending] = useActionState(logoutAction, null);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
+  const logOut = () => {
+    startTransition(() => {
+      logOutAction();
+      logout();
+    });
+  };
 
   const links = [
     { href: "/", title: "Home" },
@@ -51,42 +70,54 @@ export default function Header() {
         </nav>
       </div>
       <div className="z-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <HugeiconsIcon icon={UserIcon} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-sm">My Account</DropdownMenuLabel>
-              {accLinks.map((link, index) => (
-                <DropdownMenuItem key={index}>
-                  <Link
-                    href={link.href}
-                    className="text-sm"
-                  >
-                    {link.title}
-                  </Link>
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <HugeiconsIcon icon={UserIcon} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-sm">My Account</DropdownMenuLabel>
+                {accLinks.map((link, index) => (
+                  <DropdownMenuItem key={index}>
+                    <Link
+                      href={link.href}
+                      className="text-sm"
+                    >
+                      {link.title}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => {
+                    window.location.href = "/dashboard";
+                  }}
+                  className="text-sm"
+                >
+                  Dashboard
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => {
-                  window.location.href = "/dashboard";
-                }}
-                className="text-sm"
-              >
-                Dashboard
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button className="flex items-center gap-1 text-sm text-red-500">
-                  Log out <HugeiconsIcon icon={Logout01Icon} />
-                </button>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <DropdownMenuItem>
+                  <button
+                    className="flex items-center gap-1 text-sm text-red-500"
+                    onClick={logOut}
+                  >
+                    Log out <HugeiconsIcon icon={Logout01Icon} />
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link href="/sign-in">Sign In</Link>
+            <Link href="/sign-up">
+              <Button className="px-3 py-4 text-base">Sign Up</Button>
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );

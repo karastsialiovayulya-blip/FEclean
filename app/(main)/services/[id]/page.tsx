@@ -14,12 +14,6 @@ export default async function ServicePage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="px-[15%]">
-      <Image
-        src={service.featuredImage.url}
-        alt={service.featuredImage.alt}
-        width={500}
-        height={500}
-      />
       <div className="flex gap-[10px]">
         {service.images.map((image: CleanImage) => (
           <Image
