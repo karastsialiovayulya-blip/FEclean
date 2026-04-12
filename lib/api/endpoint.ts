@@ -11,4 +11,5 @@ export const ApiEndpoints = {
   INVENTORY_ID: function (id: number) {
     return this.INVENTORY + "/" + id;
   },
+  IMAGES: "/uploads/images",
 };

@@ -36,8 +36,8 @@ export async function createService(prevState: any, dataToSend: any) {
       message: response.message,
       ...(!response.ok && { error: response.error }),
     };
-  } catch (error) {
-    return { success: false, error: "Something went wrong" };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
   }
 }
 
@@ -52,8 +52,8 @@ export async function editService(prevState: any, dataToSend: any) {
       message: response.message,
       ...(!response.ok && { error: response.error }),
     };
-  } catch (error) {
-    return { success: false, error: "Something went wrong" };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
   }
 }
 
@@ -69,8 +69,8 @@ export async function createServiceReq(dataToSend: any) {
       message: response.message,
       ...(!response.ok && { error: response.error }),
     };
-  } catch (error) {
-    return { success: false, error: "Something went wrong" };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
   }
 }
 
@@ -84,7 +84,7 @@ export async function deleteServiceReq(serviceReqId: number) {
       message: response.message,
       ...(!response.ok && { error: response.error }),
     };
-  } catch (error) {
-    return { success: false, error: "Something went wrong" };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
   }
 }

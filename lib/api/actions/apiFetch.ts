@@ -25,9 +25,13 @@ export interface IResponse<T> {
   status: number;
 }
 
+interface RequestOption extends RequestInit {
+  body?: any;
+}
+
 export async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {},
+  options: RequestOption = {},
 ): Promise<IResponse<T>> {
   const { headers, body, ...restOptions } = options;
   const authCookie = await getAuthToken();

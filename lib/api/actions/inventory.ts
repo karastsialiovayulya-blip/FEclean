@@ -24,8 +24,8 @@ export async function createInventory(prevState: any, dataToSend: any) {
       message: response.message,
       ...(!response.ok && { error: response.error }),
     };
-  } catch (error) {
-    return { success: false, error: "Something went wrong" };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
   }
 }
 
@@ -40,7 +40,7 @@ export async function editInventory(prevState: any, dataToSend: any) {
       message: response.message,
       ...(!response.ok && { error: response.error }),
     };
-  } catch (error) {
-    return { success: false, error: "Something went wrong" };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
   }
 }

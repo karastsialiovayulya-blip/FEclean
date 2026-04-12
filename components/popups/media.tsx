@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { getImagesAPI } from "@/lib/api/actions/image";
 import { CleanImage } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -47,11 +48,8 @@ export default function MediaPopup({
 
   useEffect(() => {
     async function getImages() {
-      const responce = await fetch("http://localhost:8080/uploads/images", { method: "GET" });
-      if (responce.ok) {
-        const imagesData = await responce.json();
-        setImages(imagesData);
-      }
+      const response = await getImagesAPI();
+      setImages(response);
     }
     getImages();
   }, []);
