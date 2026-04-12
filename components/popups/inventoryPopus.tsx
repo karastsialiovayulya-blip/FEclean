@@ -1,6 +1,6 @@
 import { startTransition, useActionState, useEffect, useState } from "react";
 import Image from "next/image";
-import { createInventory, editInventory } from "@/lib/actions";
+import { createInventory, editInventory } from "@/lib/api/actions/inventory";
 import { CleanImage, Inventory } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";

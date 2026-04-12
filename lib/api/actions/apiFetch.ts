@@ -47,7 +47,7 @@ export async function apiFetch<T>(
   }
 
   if (authCookie) {
-    requestHeaders.append("Authorization", authCookie);
+    requestHeaders.append("Authorization", `Bearer ${authCookie}`);
   }
 
   const request = new Request(`${API_BASE_URL}${endpoint}`, {
