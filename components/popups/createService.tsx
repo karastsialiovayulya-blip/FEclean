@@ -1,7 +1,7 @@
 "use client";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import Image from "next/image";
-import { createService, editService } from "@/lib/actions";
+import { createService, editService } from "@/lib/api/actions/service";
 import { CleanImage, Service } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";

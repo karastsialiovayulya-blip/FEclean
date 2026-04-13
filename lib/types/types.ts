@@ -33,6 +33,10 @@ export interface ServiceRequirements {
   inventory?: Inventory;
   requiredAmount: number;
 }
+export interface UserAuthData {
+  token: string;
+  user: User;
+}
 
 export interface User {
   id: number;

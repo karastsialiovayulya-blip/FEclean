@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { SignInAction } from "@/lib/actions";
+import { SignInAction } from "@/lib/api/actions/auth";
 import { userStore } from "@/lib/store/userStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

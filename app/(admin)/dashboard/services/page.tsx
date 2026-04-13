@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { getServices } from "@/lib/api/actions/service";
 import { Service } from "@/lib/types/types";
 import { AnalyticsUpIcon, CleaningBucketIcon, Money01Icon } from "@hugeicons/core-free-icons";
 import MultipleDelete from "@/components/multipleDelete";
@@ -34,17 +35,11 @@ export default function Services() {
   };
 
   useEffect(() => {
-    async function getService() {
-      const responce = await fetch("http://localhost:8080/services", {
-        method: "GET",
-      });
-      if (responce.ok) {
-        const data = await responce.json();
-        setServices(data);
-        console.log(data);
-      }
+    async function getServiceApi() {
+      const services = await getServices();
+      setServices(services);
     }
-    getService();
+    getServiceApi();
   }, [isPopupOpen, isAddInventoryPopupOpen]);
 
   return (

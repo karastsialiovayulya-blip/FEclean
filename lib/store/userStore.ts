@@ -5,7 +5,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
-  setAuth: (user: User) => void;
+  setAuth: (user: User | null) => void;
   logout: () => void;
 }
 
