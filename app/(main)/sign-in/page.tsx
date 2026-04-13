@@ -64,7 +64,7 @@ export default function SignIn() {
             >
               Sign in
             </Button>
-            <p className="text-center text-sm text-red-500">{stateIn?.message}</p>
+            <p className="text-center text-sm text-red-500">{stateIn?.error}</p>
           </div>
         </form>
       </div>

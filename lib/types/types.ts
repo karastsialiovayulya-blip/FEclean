@@ -35,7 +35,7 @@ export interface ServiceRequirements {
 }
 export interface UserAuthData {
   token: string;
-  user: User;
+  user: AnyUser;
 }
 
 export interface User {
@@ -44,4 +44,16 @@ export interface User {
   lastName: string | null;
   email: string;
   username: string;
+  phone: string;
 }
+
+export interface Customer extends User {
+  address: string;
+}
+
+export interface Cleaner extends User {
+  rating: number;
+  experience: number;
+}
+
+export type AnyUser = User | Customer | Cleaner;
