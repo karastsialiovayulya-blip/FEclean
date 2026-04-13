@@ -12,4 +12,6 @@ export const ApiEndpoints = {
     return this.INVENTORY + "/" + id;
   },
   IMAGES: "/uploads/images",
+  SIGN_IN: "/auth/sign-in",
+  SIGN_UP: "/auth/sign-up",
 };

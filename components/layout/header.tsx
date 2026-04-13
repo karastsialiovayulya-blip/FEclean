@@ -3,7 +3,7 @@
 import { startTransition, useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { logoutAction } from "@/lib/actions";
+import { logoutAction } from "@/lib/api/actions/auth";
 import { userStore } from "@/lib/store/userStore";
 import { cn } from "@/lib/utils";
 import { Logout01Icon, UserIcon } from "@hugeicons/core-free-icons";
@@ -23,11 +23,6 @@ export default function Header() {
   const pathname = usePathname();
   const { isAuthenticated, logout } = userStore();
   const [stateIn, logOutAction, isPending] = useActionState(logoutAction, null);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    setIsReady(true);
-  }, []);
 
   const logOut = () => {
     startTransition(() => {

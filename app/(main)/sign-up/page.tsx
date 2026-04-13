@@ -2,7 +2,7 @@
 
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { SignUpAction } from "@/lib/actions";
+import { SignUpAction } from "@/lib/api/actions/auth";
 import { registrUser } from "@/lib/model";
 import { userStore } from "@/lib/store/userStore";
 import { z } from "zod";

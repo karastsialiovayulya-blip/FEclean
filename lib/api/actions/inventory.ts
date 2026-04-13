@@ -1,3 +1,4 @@
+"use server";
 import { ApiEndpoints } from "@/lib/api/endpoint";
 import { Inventory } from "@/lib/types/types";
 import { apiFetch } from "./apiFetch";
