@@ -1,11 +1,11 @@
-import { User } from "@/lib/types/types";
+import { AnyUser } from "@/lib/types/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 interface AuthState {
-  user: User | null;
+  user: AnyUser | null;
   isAuthenticated: boolean;
-  setAuth: (user: User | null) => void;
+  setAuth: (user: AnyUser | null) => void;
   logout: () => void;
 }
 

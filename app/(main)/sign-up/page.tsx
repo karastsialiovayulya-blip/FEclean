@@ -2,7 +2,7 @@
 
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { SignUpAction } from "@/lib/api/actions/auth";
+import { SignUpCustomerAction } from "@/lib/api/actions/auth";
 import { registrUser } from "@/lib/model";
 import { userStore } from "@/lib/store/userStore";
 import { z } from "zod";
@@ -15,6 +15,8 @@ interface RegUserData {
   email: string;
   firstName: string;
   lastName: string;
+  phone: string;
+  address: string;
 }
 
 interface FormErrors {
@@ -23,16 +25,20 @@ interface FormErrors {
   email?: string;
   firstName?: string;
   lastName?: string;
+  phone?: string;
+  address?: string;
 }
 
 export default function SignUp() {
-  const [stateIn, signUp, isPending] = useActionState(SignUpAction, null);
+  const [stateIn, signUp, isPending] = useActionState(SignUpCustomerAction, null);
   const [userData, setUserData] = useState<RegUserData>({
     username: "",
     password: "",
     email: "",
     firstName: "",
     lastName: "",
+    phone: "",
+    address: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -135,6 +141,28 @@ export default function SignUp() {
             <p className="text-sm text-red-500">{errors.email}</p>
           </div>
           <div>
+            <label>Enter phone</label>
+            <Input
+              value={userData.phone}
+              type="text"
+              name="phone"
+              placeholder="phone"
+              onChange={handleChange}
+            />
+            <p className="text-sm text-red-500">{errors.phone}</p>
+          </div>
+          <div>
+            <label>Enter main address</label>
+            <Input
+              value={userData.address}
+              type="text"
+              name="address"
+              placeholder="address"
+              onChange={handleChange}
+            />
+            <p className="text-sm text-red-500">{errors.phone}</p>
+          </div>
+          <div>
             <label>Enter password</label>
             <Input
               value={userData.password}
@@ -151,7 +179,7 @@ export default function SignUp() {
               type="submit"
               disabled={isPending}
             >
-              Sign in
+              Sign Up
             </Button>
             <p className="text-center text-sm text-red-500">{stateIn?.message}</p>
           </div>
