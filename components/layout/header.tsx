@@ -21,7 +21,7 @@ import { Button } from "../ui/button";
 
 export default function Header() {
   const pathname = usePathname();
-  const { isAuthenticated, logout } = userStore();
+  const { user, isAuthenticated, logout } = userStore();
   const [stateIn, logOutAction, isPending] = useActionState(logoutAction, null);
 
   const logOut = () => {
@@ -86,14 +86,16 @@ export default function Header() {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => {
-                    window.location.href = "/dashboard";
-                  }}
-                  className="text-sm"
-                >
-                  Dashboard
-                </DropdownMenuItem>
+                {user?.roles.includes("ROLE_ADMIN") && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      window.location.href = "/dashboard";
+                    }}
+                    className="text-sm"
+                  >
+                    Dashboard
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem>
                   <button
                     className="flex items-center gap-1 text-sm text-red-500"

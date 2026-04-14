@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { userStore } from "@/lib/store/userStore";
+import { Customer } from "@/lib/types/types";
 import {
   Location03Icon,
   MailEdit01Icon,
@@ -9,7 +10,9 @@ import {
   TelephoneIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import CustomerPage from "@/components/profilePages/customerPage";
 import { Button } from "@/components/ui/button";
+import ContactInformation from "@/components/users/contactInformation";
 
 export default function Profile() {
   const { user } = userStore();
@@ -19,7 +22,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="px-[15%] py-10">
+    <div className="px-[10%] py-10">
       <div className="flex items-end justify-between">
         <div className="">
           <span className="text-primary font-label mb-4 block text-sm tracking-widest uppercase">
@@ -27,7 +30,6 @@ export default function Profile() {
           </span>
           <h1 className="mb-6 text-5xl leading-none font-bold md:text-6xl">
             Welcome back,
-            <br />
             <span className="text-primary">
               {user.firstName} {user.lastName}
             </span>
@@ -49,56 +51,9 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <div className="mt-15">
-        <aside className="w-fit min-w-max">
-          <section className="flex flex-col gap-5 rounded-xl bg-white p-8 transition-all duration-300 hover:translate-y-[-2px]">
-            <h2 className="text-xl font-bold">Contact Information</h2>
-            <div className="space-y-6 pe-10">
-              <div className="flex items-center gap-4">
-                <HugeiconsIcon
-                  className="text-primary/60"
-                  icon={MailEdit01Icon}
-                />
-                <div>
-                  <p className="text-xs font-semibold tracking-wider uppercase">Email Address</p>
-                  <p className="font-medium">{user.email}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <HugeiconsIcon
-                  className="text-primary/60"
-                  icon={TelephoneIcon}
-                />
-                <div>
-                  <p className="text-xs font-semibold tracking-wider uppercase">Phone Number</p>
-                  <p className="font-medium">+1 (555) 234-8890</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <HugeiconsIcon
-                  className="text-primary/60"
-                  icon={Location03Icon}
-                />
-                <div>
-                  <p className="text-xs font-semibold tracking-wider uppercase">
-                    Primary Residence
-                  </p>
-                  <p className="font-medium">
-                    122 High Street, Suite 4B
-                    <br />
-                    New York, NY 10001
-                  </p>
-                </div>
-              </div>
-            </div>
-            <Button
-              size="normal"
-              variant="secondary"
-            >
-              Edit Profile
-            </Button>
-          </section>
-        </aside>
+      <div className="mt-10 flex gap-10">
+        <ContactInformation user={user} />
+        {user.roles.includes("ROLE_USER") && <CustomerPage user={user as Customer} />}
       </div>
     </div>
   );

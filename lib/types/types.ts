@@ -45,7 +45,10 @@ export interface User {
   email: string;
   username: string;
   phone: string;
+  roles: Role[];
 }
+
+export type Role = "ROLE_USER" | "ROLE_ADMIN" | "ROLE_CLEANER";
 
 export interface Customer extends User {
   address: string;
