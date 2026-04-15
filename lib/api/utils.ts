@@ -12,3 +12,14 @@ export const getAuthTokenAction = async () => {
     return false;
   }
 };
+
+export const checkAuthtoken = async () => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("jwt_token");
+
+  if (token) {
+    return true;
+  } else {
+    return false;
+  }
+};
