@@ -10,8 +10,7 @@ export default function AuthInitializer() {
   useEffect(() => {
     const checkSession = async () => {
       const session = await checkAuthtoken();
-      console.log(session);
-      logout();
+      if (!session) logout();
     };
     checkSession();
   }, []);

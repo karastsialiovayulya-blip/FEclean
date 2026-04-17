@@ -31,7 +31,7 @@ export const cartStore = create<CartState>()(
             return {
               cartLines: state.cartLines.map((line) =>
                 line.service.id === newLine.service.id
-                  ? { ...line, quantity: line.quantity + 1 }
+                  ? { ...line, quantity: line.quantity + newLine.quantity }
                   : line,
               ),
             };

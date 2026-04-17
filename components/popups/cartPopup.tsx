@@ -100,7 +100,7 @@ export default function CartPopup() {
               />
             ))
           ) : (
-            <div>No itesm :((((</div>
+            <div className="w-full rounded-xl bg-gray-100 py-7 text-center">No itesm :((((</div>
           )}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
@@ -108,7 +108,7 @@ export default function CartPopup() {
           <h3 className="mt-3 mb-4 font-bold">Total price: ${cartState.getPrice()}</h3>
           <div className="flex gap-2">
             <Link
-              href=""
+              href="/cart"
               className="flex-1"
             >
               <Button
@@ -119,6 +119,7 @@ export default function CartPopup() {
               </Button>
             </Link>
             <Button
+              onClick={() => cartState.clearCart()}
               size="normal"
               variant="secondary"
               className="flex-1"

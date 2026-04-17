@@ -1,6 +1,7 @@
 export interface Service {
   id: number;
   name: string;
+  category?: string;
   description: string;
   depedensOnArea: number | null;
   featuredImage: CleanImage | null;

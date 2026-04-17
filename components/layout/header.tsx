@@ -65,9 +65,9 @@ export default function Header() {
           ))}
         </nav>
       </div>
-      <div className="z-2 flex gap-5">
+      <div className="z-2 flex items-center gap-5">
         <CartPopup />
-        {isAuthenticated ? (
+        {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <HugeiconsIcon icon={UserIcon} />

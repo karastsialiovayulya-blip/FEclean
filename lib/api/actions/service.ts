@@ -44,7 +44,7 @@ export async function createService(prevState: any, dataToSend: any) {
 
 export async function editService(prevState: any, dataToSend: any) {
   try {
-    const response = await apiFetch(ApiEndpoints.SERVICE_ID + dataToSend.id, {
+    const response = await apiFetch(ApiEndpoints.SERVICE_ID(dataToSend.id), {
       method: "PUT",
       body: dataToSend,
     });
