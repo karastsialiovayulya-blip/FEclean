@@ -1,3 +1,5 @@
+import { CartLine } from "@/lib/store/cartStore";
+
 export interface Service {
   id: number;
   name: string;
@@ -61,3 +63,30 @@ export interface Cleaner extends User {
 }
 
 export type AnyUser = User | Customer | Cleaner;
+
+export interface CleanerAvailabilitySlot {
+  start: string;
+  end: string;
+  availableCleaners: number;
+  totalPrice: number;
+}
+
+export enum OrderStatus {
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+}
+
+export interface Order {
+  id: number;
+  customer: Customer;
+  status: OrderStatus;
+  totalPrice: number;
+  totalTime: number;
+  appointmentDate: string;
+  items: CartLine[];
+  cleaners: Cleaner[];
+  requestedCleanerCount: number;
+  address: string;
+}

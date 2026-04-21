@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { CartLine, cartStore } from "@/lib/store/cartStore";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -122,12 +123,14 @@ export default function CartPage() {
                 </Button>
               </div>
             </div>
-            <Button
-              className="w-full text-lg"
-              size="normal"
-            >
-              Proceed to Checkout
-            </Button>
+            <Link href="/checkout">
+              <Button
+                className="w-full text-lg"
+                size="normal"
+              >
+                Proceed to Checkout
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
