@@ -2,7 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CartLine, cartStore } from "@/lib/store/cartStore";
+import {
+  CartLine,
+  MAX_AVAILABLE_CLEANERS,
+  MIN_ORDER_TIME_MINUTES,
+  cartStore,
+} from "@/lib/store/cartStore";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
@@ -71,6 +76,25 @@ function CartLineItem({ cartLine }: { cartLine: CartLine }) {
 
 export default function CartPage() {
   const cartState = cartStore();
+  const basePrice = cartState.getBasePrice();
+  const totalPrice = cartState.getAdjustedTotalPrice();
+  const baseTime = cartState.getBaseTime();
+  const estimatedTime = cartState.getEstimatedTime();
+
+  const formatMinutes = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (hours === 0) {
+      return `${remainingMinutes} min`;
+    }
+
+    if (remainingMinutes === 0) {
+      return `${hours}h`;
+    }
+
+    return `${hours}h ${remainingMinutes} min`;
+  };
 
   return (
     <div className="px-20 py-10">
@@ -102,31 +126,58 @@ export default function CartPage() {
         <div className="w-1/3">
           <div className="rounded-lg border bg-white p-8 shadow-lg">
             <h2 className="mb-6 text-2xl font-semibold">Order Summary</h2>
-            <div className="mb-6 flex justify-between">
-              <span className="text-lg">Total Price:</span>
-              <span className="text-2xl font-bold">${cartState.getPrice()}</span>
-            </div>
-            <div className="mb-6">
-              <label className="mb-2 block text-lg font-medium">Promo Code</label>
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="Enter promo code"
-                  className="h-10 flex-1 text-base"
-                />
+            <div className="mb-6 rounded-xl bg-gray-50 p-4">
+              <p className="mb-3 text-sm font-medium text-gray-500 uppercase">Requested Cleaners</p>
+              <div className="flex items-center justify-between gap-3">
                 <Button
-                  variant="secondary"
-                  size="normal"
-                  className="h-10"
+                  type="button"
+                  variant="outline"
+                  className="rounded-full bg-white"
+                  onClick={() => cartState.decreaseRequestedCleanerCount()}
+                  disabled={cartState.requestedCleanerCount <= 1}
                 >
-                  Apply
+                  <span className="text-xl">-</span>
+                </Button>
+                <div className="text-center">
+                  <p className="text-3xl font-bold">{cartState.requestedCleanerCount}</p>
+                  <p className="text-sm text-gray-500">max {MAX_AVAILABLE_CLEANERS} cleaners</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="rounded-full bg-white"
+                  onClick={() => cartState.increaseRequestedCleanerCount()}
+                  disabled={cartState.requestedCleanerCount >= MAX_AVAILABLE_CLEANERS}
+                >
+                  <span className="text-xl">+</span>
                 </Button>
               </div>
             </div>
+            <div className="mb-4 flex justify-between">
+              <span className="text-lg">Services Total:</span>
+              <span className="text-xl font-semibold">${basePrice}</span>
+            </div>
+            <div className="mb-4 flex justify-between">
+              <span className="text-lg">Base Time:</span>
+              <span className="text-xl font-semibold">{formatMinutes(baseTime)}</span>
+            </div>
+            <div className="mb-4 flex justify-between">
+              <span className="text-lg">Estimated Order Time:</span>
+              <span className="text-xl font-semibold">{formatMinutes(estimatedTime)}</span>
+            </div>
+            <div className="mb-6 flex justify-between border-t pt-4">
+              <span className="text-lg">Total Price:</span>
+              <span className="text-2xl font-bold">${totalPrice}</span>
+            </div>
+            <p className="mb-6 text-sm leading-6 text-gray-500">
+              Orders have a minimum duration of {formatMinutes(MIN_ORDER_TIME_MINUTES)}. More
+              cleaners can shorten the visit, but the booking cannot go below that floor.
+            </p>
             <Link href="/checkout">
               <Button
                 className="w-full text-lg"
                 size="normal"
+                disabled={cartState.cartLines.length === 0}
               >
                 Proceed to Checkout
               </Button>

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getSlotsAPI } from "@/lib/api/actions/order";
+import { createOrderAPI, getSlotsAPI } from "@/lib/api/actions/order";
 import { CartLine, cartStore } from "@/lib/store/cartStore";
 import { userStore } from "@/lib/store/userStore";
-import { CleanerAvailabilitySlot, Customer, Order, OrderStatus } from "@/lib/types/types";
+import { CleanerAvailabilitySlot } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -23,6 +23,14 @@ interface OrderCheckRequest {
   address: string;
 }
 
+interface CreateOrderRequest extends OrderCheckRequest {
+  customerId?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const cartState = cartStore();
@@ -32,7 +40,33 @@ export default function CheckoutPage() {
   const [selectedSlot, setSelectedSlot] = useState<CleanerAvailabilitySlot | null>(null);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [mounted, setMounted] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [orderError, setOrderError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const formatLocalDateKey = (value: Date) => {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatLocalDateTime = (value: Date) => {
+    const datePart = formatLocalDateKey(value);
+    const hours = String(value.getHours()).padStart(2, "0");
+    const minutes = String(value.getMinutes()).padStart(2, "0");
+    const seconds = String(value.getSeconds()).padStart(2, "0");
+    return `${datePart}T${hours}:${minutes}:${seconds}`;
+  };
+
+  const normalizeSlotDateTime = (value: string) => {
+    const [datePart = "", timePart = "00:00:00"] = value.split("T");
+    const cleanTime = timePart.replace(/Z$/, "").split(/[+-]/)[0] || "00:00:00";
+    return `${datePart}T${cleanTime.slice(0, 8)}`;
+  };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -51,7 +85,7 @@ export default function CheckoutPage() {
       return [];
     }
 
-    const selectedDay = selectedDate.toISOString().slice(0, 10);
+    const selectedDay = formatLocalDateKey(selectedDate);
     const matchingSlots = slots.filter((slot) => slot.start.slice(0, 10) === selectedDay);
     setAvailableSlots(matchingSlots);
     setSelectedSlot(null);
@@ -66,105 +100,77 @@ export default function CheckoutPage() {
 
   const handleSlotSelect = (slot: CleanerAvailabilitySlot) => {
     setSelectedSlot(slot);
+    setOrderError("");
   };
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setOrderError("");
   };
 
-  const handleBookOrder = () => {
+  const handleBookOrder = async () => {
     // Validate all required fields
     if (!date || !selectedSlot) {
-      alert("Please select a date and time slot");
+      setOrderError("Please select a date and time slot.");
+      return;
+    }
+
+    if (!formData.address) {
+      setOrderError("Please fill in all required fields.");
       return;
     }
 
     if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.address
+      !userState.isAuthenticated &&
+      (!formData.firstName || !formData.lastName || !formData.email || !formData.phone)
     ) {
-      alert("Please fill in all required fields");
+      setOrderError("Please fill in all required fields.");
       return;
     }
 
     if (cartState.cartLines.length === 0) {
-      alert("Your cart is empty");
+      setOrderError("Your cart is empty.");
       return;
     }
 
-    // Create customer object
-    const customer: Customer = {
-      id: userState.user?.id || 0,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      username: userState.user?.username || "",
-      phone: formData.phone,
-      roles: userState.user?.roles || [],
+    setOrderError("");
+    setIsSubmitting(true);
+
+    const items: CartItemDto[] = cartState.cartLines.map((line: CartLine) => ({
+      serviceId: line.service.id,
+      quantity: line.quantity,
+    }));
+
+    const orderRequest: CreateOrderRequest = {
+      items,
+      requestedCleanerCount: cartState.requestedCleanerCount,
+      appointmentDate: normalizeSlotDateTime(selectedSlot.start),
       address: formData.address,
     };
 
-    // Calculate total price and time
-    const totalPrice =
-      cartState.cartLines.reduce((sum, line) => sum + line.service.price * line.quantity, 0) +
-      selectedSlot.totalPrice;
-    const totalTime = cartState.cartLines.reduce(
-      (sum, line) => sum + line.service.time * line.quantity,
-      0,
-    );
+    if (userState.isAuthenticated && userState.user?.id) {
+      orderRequest.customerId = userState.user.id;
+    } else {
+      orderRequest.firstName = formData.firstName;
+      orderRequest.lastName = formData.lastName;
+      orderRequest.email = formData.email;
+      orderRequest.phone = formData.phone;
+    }
 
-    // Create order object
-    const order: Order = {
-      id: 0, // Will be assigned by backend
-      customer,
-      status: OrderStatus.PENDING,
-      totalPrice,
-      totalTime,
-      appointmentDate: selectedSlot.start,
-      items: cartState.cartLines,
-      cleaners: [],
-      requestedCleanerCount: 1,
-      address: formData.address,
-    };
+    console.log("Order request:", orderRequest);
+    const response = await createOrderAPI(orderRequest);
+    console.log("Order response:", response);
 
-    console.log("Order created:", order);
-    // TODO: Send order to backend/API
+    if (response.ok) {
+      router.push("/checkout/success");
+      cartState.clearCart();
+      return;
+    }
+
+    setOrderError(response.error || "Failed to create order.");
+    setIsSubmitting(false);
   };
 
-  const getProgressWidth = () => {
-    switch (currentStep) {
-      case 1:
-        return "w-1/3";
-      case 2:
-        return "w-2/3";
-      case 3:
-        return "w-full";
-      default:
-        return "w-1/3";
-    }
-  };
-
-  // Update progress bar based on user progress
-  useEffect(() => {
-    if (date) {
-      setCurrentStep(2);
-    }
-  }, [date]);
-
-  useEffect(() => {
-    if (selectedSlot) {
-      setCurrentStep(3);
-    }
-  }, [selectedSlot]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Populate form with user data if logged in
   useEffect(() => {
     if (userState.isAuthenticated && userState.user) {
       setFormData({
@@ -192,14 +198,16 @@ export default function CheckoutPage() {
         quantity: line.quantity,
       }));
 
-      const currentDate = new Date().toISOString().slice(0, 19);
+      const currentDate = formatLocalDateTime(new Date());
 
       const request: OrderCheckRequest = {
         items,
-        requestedCleanerCount: 1,
+        requestedCleanerCount: cartState.requestedCleanerCount,
         appointmentDate: currentDate,
         address: "lolo street 123",
       };
+
+      console.log("Fetching slots with request:", request);
 
       const result = await getSlotsAPI(request);
       console.log("Fetched slots:", result);
@@ -208,7 +216,7 @@ export default function CheckoutPage() {
     };
 
     fetchSlots();
-  }, [cartState.cartLines, mounted, router]);
+  }, [cartState.cartLines, cartState.requestedCleanerCount, mounted, router]);
 
   return (
     <main>
@@ -230,36 +238,14 @@ export default function CheckoutPage() {
             <div className="bg-surface-container relative mx-auto h-1.5 w-full max-w-md overflow-hidden rounded-full">
               <div
                 className={cn(
-                  "bg-primary absolute top-0 left-0 h-full transition-all duration-700",
-                  getProgressWidth(),
+                  "bg-primary absolute top-0 left-0 h-full w-full transition-all duration-700",
                 )}
               ></div>
             </div>
             <div className="mx-auto mt-4 flex max-w-md justify-between px-1">
-              <span
-                className={cn(
-                  "text-xs font-bold",
-                  currentStep >= 1 ? "text-primary" : "text-outline",
-                )}
-              >
-                Service
-              </span>
-              <span
-                className={cn(
-                  "text-xs font-medium",
-                  currentStep >= 2 ? "text-primary" : "text-outline",
-                )}
-              >
-                Schedule
-              </span>
-              <span
-                className={cn(
-                  "text-xs font-medium",
-                  currentStep >= 3 ? "text-primary" : "text-outline",
-                )}
-              >
-                Details
-              </span>
+              <span className="text-primary text-xs font-bold">Service</span>
+              <span className="text-primary text-xs font-bold">Schedule</span>
+              <span className="text-primary text-xs font-bold">Details</span>
             </div>
           </div>
           <div className="space-y-10 px-[20%]">
@@ -457,13 +443,17 @@ export default function CheckoutPage() {
               </div>
             </div>
             <div className="mt-15 mb-20 flex justify-center">
-              <Button
-                size="normal"
-                className="w-48 px-5 py-4 text-lg"
-                onClick={handleBookOrder}
-              >
-                Book order
-              </Button>
+              <div className="flex w-full max-w-md flex-col items-center gap-3">
+                <Button
+                  size="normal"
+                  className="w-48 px-5 py-4 text-lg"
+                  onClick={handleBookOrder}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Booking..." : "Book order"}
+                </Button>
+                {orderError && <p className="text-center text-sm text-red-600">{orderError}</p>}
+              </div>
             </div>
           </div>
         </>

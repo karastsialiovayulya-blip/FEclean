@@ -41,13 +41,16 @@ export interface UserAuthData {
   user: AnyUser;
 }
 
-export interface User {
-  id: number;
+export interface Person {
   firstName: string | null;
   lastName: string | null;
   email: string;
-  username: string;
   phone: string;
+}
+
+export interface User extends Person {
+  id: number;
+  username: string;
   roles: Role[];
 }
 
