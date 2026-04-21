@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getInventories } from "@/lib/api/actions/inventory";
 import { createServiceReq, deleteServiceReq } from "@/lib/api/actions/service";
 import { Inventory, Service } from "@/lib/types/types";
-import { Delete02Icon, XlsIcon } from "@hugeicons/core-free-icons";
+import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Combobox,
@@ -77,7 +77,7 @@ export default function AddInventoryPopupToService({
       const result = await getInventories();
       setInventories(result);
     }
-    getInventories();
+    getInventoriesAPI();
 
     const existedReq: NewServiceReq[] = service.requirments.map((requirement) => ({
       id: requirement.id,

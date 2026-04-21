@@ -15,4 +15,6 @@ export const ApiEndpoints = {
   SIGN_IN: "/auth/sign-in",
   SIGN_UP: "/auth/sign-up",
   SIGN_UP_CUSTOMER: "/auth/sign-up/customer",
+  ORDERS: "/orders",
+  ORDERS_SLOTS: "/orders/available-slots",
 };

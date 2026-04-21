@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/lib/api/actions/auth";
 import { userStore } from "@/lib/store/userStore";
 import { cn } from "@/lib/utils";
-import { Logout01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import { Logout01Icon, ShoppingCart02Icon, UserIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import CartPopup from "@/components/popups/cartPopup";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,8 +65,9 @@ export default function Header() {
           ))}
         </nav>
       </div>
-      <div className="z-2">
-        {isAuthenticated ? (
+      <div className="z-2 flex items-center gap-5">
+        <CartPopup />
+        {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <HugeiconsIcon icon={UserIcon} />

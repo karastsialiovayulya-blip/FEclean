@@ -50,6 +50,7 @@ export default function CreateService({
     if (service) {
       startTransition(() => {
         editAction(dataToSend);
+        console.log(stateEdit);
       });
     } else {
       startTransition(() => {
