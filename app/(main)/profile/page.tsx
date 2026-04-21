@@ -1,24 +1,44 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { userStore } from "@/lib/store/userStore";
-import { Customer } from "@/lib/types/types";
-import {
-  Location03Icon,
-  MailEdit01Icon,
-  Plant03Icon,
-  TelephoneIcon,
-} from "@hugeicons/core-free-icons";
+import { Cleaner, Customer } from "@/lib/types/types";
+import { Plant03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import CleanerPage from "@/components/profilePages/cleanerPage";
 import CustomerPage from "@/components/profilePages/customerPage";
 import { Button } from "@/components/ui/button";
 import ContactInformation from "@/components/users/contactInformation";
 
 export default function Profile() {
+  const router = useRouter();
   const { user } = userStore();
+  const [hasHydrated, setHasHydrated] = useState(false);
 
-  if (!user) {
-    redirect("/");
+  useEffect(() => {
+    const finishHydration = () => setHasHydrated(true);
+
+    if (userStore.persist.hasHydrated()) {
+      finishHydration();
+    }
+
+    const unsubscribe = userStore.persist.onFinishHydration(finishHydration);
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (hasHydrated && !user) {
+      router.replace("/");
+    }
+  }, [hasHydrated, router, user]);
+
+  if (!hasHydrated || !user) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center">
+        <p className="text-lg">Loading profile...</p>
+      </div>
+    );
   }
 
   return (
@@ -51,9 +71,12 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <div className="mt-10 flex gap-10">
+      <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[max-content_minmax(0,1fr)]">
         <ContactInformation user={user} />
-        {user.roles.includes("ROLE_USER") && <CustomerPage user={user as Customer} />}
+        <div className="min-w-0">
+          {user.roles.includes("ROLE_USER") && <CustomerPage user={user as Customer} />}
+          {user.roles.includes("ROLE_CLEANER") && <CleanerPage user={user as Cleaner} />}
+        </div>
       </div>
     </div>
   );

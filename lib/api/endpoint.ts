@@ -17,4 +17,19 @@ export const ApiEndpoints = {
   SIGN_UP_CUSTOMER: "/auth/sign-up/customer",
   ORDERS: "/orders",
   ORDERS_SLOTS: "/orders/available-slots",
+  ORDERS_CUSTOMER: function (id: number) {
+    return this.ORDERS + "/customer/" + id;
+  },
+  ORDERS_CLEANER: function (id: number) {
+    return this.ORDERS + "/cleaner/" + id;
+  },
+  ORDERS_UNASSIGNED: function (id: number) {
+    return this.ORDERS + "/unassigned/" + id;
+  },
+  ORDER_ID_CLAIM: function (id: number) {
+    return this.ORDERS + "/" + id + "/claim";
+  },
+  ORDER_ID_STATUS: function (id: number) {
+    return this.ORDERS + "/" + id + "/change-status";
+  },
 };

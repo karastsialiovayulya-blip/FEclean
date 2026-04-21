@@ -39,10 +39,7 @@ export default function Header() {
     { href: "/contact-us", title: "Contact us" },
   ];
 
-  const accLinks = [
-    { href: "/profile", title: "Profile" },
-    { href: "/profile/settings", title: "Settings" },
-  ];
+  const accLinks = [{ href: "/profile", title: "Profile" }];
 
   return (
     <header className="relative flex w-full items-center justify-between bg-white px-[10%] py-5">
