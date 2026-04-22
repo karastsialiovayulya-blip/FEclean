@@ -4,6 +4,9 @@ export const ApiEndpoints = {
     return this.SERVICES + "/" + id;
   },
   SERVICE_CATEGORIES: "/categories",
+  SERVICE_CATEGORIES_ID: function (id: string) {
+    return this.SERVICE_CATEGORIES + "/" + id;
+  },
   REQUIREMENTS: "/services/requirements",
   REQUIREMENT_ID: function (id: number) {
     return this.REQUIREMENTS + "/" + id;

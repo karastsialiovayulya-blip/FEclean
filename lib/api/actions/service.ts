@@ -101,3 +101,34 @@ export async function getServicesCategoriesAPI() {
     return [];
   }
 }
+
+export async function createServiceCategoryAPI(prevState: any, dataToSend: any) {
+  try {
+    const response = await apiFetch(ApiEndpoints.SERVICE_CATEGORIES, {
+      method: "POST",
+      body: dataToSend,
+    });
+    return {
+      success: response.ok,
+      message: response.message,
+      ...(!response.ok && { error: response.error }),
+    };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
+  }
+}
+
+export async function deleteServiceCategoryAPI(id: string) {
+  try {
+    const response = await apiFetch(ApiEndpoints.SERVICE_CATEGORIES_ID(id), {
+      method: "DELETE",
+    });
+    return {
+      success: response.ok,
+      message: response.message,
+      ...(!response.ok && { error: response.error }),
+    };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
+  }
+}
