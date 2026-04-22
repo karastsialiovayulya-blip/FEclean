@@ -1,3 +1,5 @@
+"use client";
+
 import "@/app/globals.css";
 import DashboardNav from "@/components/layout/dashboardNav";
 import { TooltipProvider } from "@/components/ui/tooltip";

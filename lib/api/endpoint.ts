@@ -32,4 +32,8 @@ export const ApiEndpoints = {
   ORDER_ID_STATUS: function (id: number) {
     return this.ORDERS + "/" + id + "/change-status";
   },
+  USERS: "/users",
+  USER_ID: function (id: number) {
+    return this.USERS + "/" + id;
+  },
 };

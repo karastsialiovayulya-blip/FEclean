@@ -1,15 +1,6 @@
-import { success } from "zod";
 import { getAuthTokenAction } from "../utils";
 
 const API_BASE_URL = "http://localhost:8080";
-
-async function getAuthToken() {
-  if (typeof window === "undefined") {
-    return false;
-  } else {
-    return await getAuthTokenAction();
-  }
-}
 
 export interface IResponse<T> {
   pagination?: {
@@ -34,7 +25,9 @@ export async function apiFetch<T>(
   options: RequestOption = {},
 ): Promise<IResponse<T>> {
   const { headers, body, ...restOptions } = options;
-  const authCookie = await getAuthToken();
+  const authCookie = await getAuthTokenAction();
+
+  console.log("TOKEN:", authCookie);
 
   const requestHeaders = new Headers({
     ...headers,
@@ -42,12 +35,8 @@ export async function apiFetch<T>(
     "ngrok-skip-browser-warning": "true",
   });
 
-  if (!(body instanceof FormData)) {
+  if (body && !(body instanceof FormData)) {
     requestHeaders.append("Content-Type", "application/json");
-  }
-
-  if (authCookie) {
-    requestHeaders.append("Cookie", authCookie);
   }
 
   if (authCookie) {
