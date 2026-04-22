@@ -1,6 +1,6 @@
 "use server";
 import { ApiEndpoints } from "@/lib/api/endpoint";
-import { Service } from "@/lib/types/types";
+import { Category, Service } from "@/lib/types/types";
 import { apiFetch } from "./apiFetch";
 
 export async function getServices() {
@@ -87,5 +87,17 @@ export async function deleteServiceReq(serviceReqId: number) {
     };
   } catch (e) {
     return { success: false, message: "Something went wrong", error: (e as Error).message };
+  }
+}
+
+export async function getServicesCategoriesAPI() {
+  try {
+    const response = await apiFetch<Category[]>(ApiEndpoints.SERVICE_CATEGORIES, { method: "GET" });
+    if (response.ok) {
+      console.log(response);
+      return response.data;
+    } else return [];
+  } catch (e) {
+    return [];
   }
 }
