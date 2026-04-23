@@ -13,9 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "../ui/input";
 
 function CartLineItem({ cartLine }: { cartLine: CartLine }) {
-  const { service, quantity } = cartLine;
+  const { id, service, quantity, area } = cartLine;
   const cartState = cartStore();
 
   return (
@@ -43,36 +44,52 @@ function CartLineItem({ cartLine }: { cartLine: CartLine }) {
           <p className="line-clamp-2 font-thin text-gray-500">{service.description}</p>
         </div>
         <div className="flex items-end gap-3">
-          <div className="flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-gray-50 px-2 py-1">
-            <Button
-              onClick={() => cartState.decreaseQuantity(service.id)}
-              variant="outline"
-              className="items-center justify-center rounded-full bg-white shadow-sm"
-            >
-              <span className="text-lg">-</span>
-            </Button>
-            <span className="min-w-[20px] text-center text-sm font-medium">{quantity}</span>
-            <Button
-              onClick={() => cartState.increaseQuantity(service.id)}
-              variant="outline"
-              className="items-center justify-center rounded-full bg-white shadow-sm"
-            >
-              <span className="text-lg">+</span>
-            </Button>
-          </div>
+          {quantity ? (
+            <div className="flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-gray-50 px-2 py-1">
+              <Button
+                onClick={() => cartState.decreaseQuantity(id)}
+                variant="outline"
+                className="items-center justify-center rounded-full bg-white shadow-sm"
+              >
+                <span className="text-lg">-</span>
+              </Button>
+              <span className="min-w-[20px] text-center text-sm font-medium">{quantity}</span>
+              <Button
+                onClick={() => cartState.increaseQuantity(id)}
+                variant="outline"
+                className="items-center justify-center rounded-full bg-white shadow-sm"
+              >
+                <span className="text-lg">+</span>
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <Input
+                value={area}
+                onChange={(e) => {
+                  let newArea = Number(e.target.value);
+                  if (!Number.isNaN(newArea) && service.depedensOnArea) {
+                    if (newArea < service.depedensOnArea) newArea = service.depedensOnArea;
+                    if (newArea > 200) newArea = 200;
+                    cartState.changeArea(id, newArea);
+                  }
+                }}
+              />
+            </div>
+          )}
           <Button
             className="block px-2"
             size="normal"
             variant="destructive"
             onClick={() => {
-              cartState.removeService(service.id);
+              cartState.removeService(id);
             }}
           >
             <HugeiconsIcon icon={Delete02Icon} />
           </Button>
         </div>
       </div>
-      <div>${service.price}</div>
+      <div>${cartState.getCartLinePrice(id).toFixed(2)}</div>
     </div>
   );
 }
@@ -95,7 +112,7 @@ export default function CartPopup() {
           {cartState.cartLines.length > 0 ? (
             cartState.cartLines.map((cartLine) => (
               <CartLineItem
-                key={cartLine.service.id}
+                key={cartLine.id}
                 cartLine={cartLine}
               />
             ))
@@ -105,7 +122,8 @@ export default function CartPopup() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <h3 className="mt-3 mb-4 font-bold">Total price: ${cartState.getPrice()}</h3>
+          <h3 className="mt-3 mb-4 font-bold">Total price: ${cartState.getPrice().toFixed(2)}</h3>
+          <h3 className="mt-3 mb-4 font-bold">Total time: {cartState.getEstimatedTime()} min</h3>
           <div className="flex gap-2">
             <Link
               href="/cart"

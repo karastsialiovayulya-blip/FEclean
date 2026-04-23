@@ -77,6 +77,9 @@ export default function CreateService({
       depedensOnArea: formData.get("depedensOnArea")
         ? Number(formData.get("depedensOnArea"))
         : null,
+      priceForAdditionalMeter: formData.get("priceForAdditionalMeter")
+        ? Number(formData.get("priceForAdditionalMeter"))
+        : null,
     };
 
     if (service) {
@@ -194,17 +197,30 @@ export default function CreateService({
               <span>Depends on area</span>
             </div>
             {isDependsOnArea && (
-              <div>
-                <h3>Set minimum area required </h3>
-                <Input
-                  defaultValue={service?.depedensOnArea ?? undefined}
-                  id="input-demo-api-key"
-                  type="text"
-                  placeholder="Depends on ares"
-                  name="depedensOnArea"
-                  className="text-base"
-                />
-              </div>
+              <>
+                <div>
+                  <h3>Set minimum area required </h3>
+                  <Input
+                    defaultValue={service?.depedensOnArea ?? undefined}
+                    id="input-demo-api-key"
+                    type="text"
+                    placeholder="Depends on ares"
+                    name="depedensOnArea"
+                    className="text-base"
+                  />
+                </div>
+                <div>
+                  <h3>Set price for additional meter </h3>
+                  <Input
+                    defaultValue={service?.priceForAdditionalMeter ?? undefined}
+                    id="input-demo-api-key"
+                    type="text"
+                    placeholder="price for additional meter"
+                    name="priceForAdditionalMeter"
+                    className="text-base"
+                  />
+                </div>
+              </>
             )}
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between gap-3">

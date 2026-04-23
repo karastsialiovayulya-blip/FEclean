@@ -14,6 +14,7 @@ import { Calendar } from "@/components/ui/calendar";
 interface CartItemDto {
   serviceId: number;
   quantity: number;
+  area: number | null;
 }
 
 interface OrderCheckRequest {
@@ -30,6 +31,12 @@ interface CreateOrderRequest extends OrderCheckRequest {
   email?: string;
   phone?: string;
 }
+
+const toCartItemDto = (line: CartLine): CartItemDto => ({
+  serviceId: line.service.id,
+  quantity: line.quantity ?? 1,
+  area: line.area ?? null,
+});
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -68,7 +75,6 @@ export default function CheckoutPage() {
     setMounted(true);
   }, []);
 
-  // Form state
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -136,10 +142,7 @@ export default function CheckoutPage() {
     setOrderError("");
     setIsSubmitting(true);
 
-    const items: CartItemDto[] = cartState.cartLines.map((line: CartLine) => ({
-      serviceId: line.service.id,
-      quantity: line.quantity,
-    }));
+    const items: CartItemDto[] = cartState.cartLines.map(toCartItemDto);
 
     const orderRequest: CreateOrderRequest = {
       items,
@@ -192,11 +195,10 @@ export default function CheckoutPage() {
       return;
     }
 
+    console.log(cartState.cartLines.length);
+
     const fetchSlots = async () => {
-      const items: CartItemDto[] = cartState.cartLines.map((line: CartLine) => ({
-        serviceId: line.service.id,
-        quantity: line.quantity,
-      }));
+      const items: CartItemDto[] = cartState.cartLines.map(toCartItemDto);
 
       const currentDate = formatLocalDateTime(new Date());
 
@@ -260,7 +262,7 @@ export default function CheckoutPage() {
                 <div className="flex gap-4 pb-4">
                   {cartState.cartLines.map((line: CartLine) => (
                     <div
-                      key={line.service.id}
+                      key={line.id}
                       className="bg-surface-container w-80 flex-shrink-0 rounded-lg p-4"
                     >
                       <div className="relative aspect-square w-full">
@@ -283,15 +285,17 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-outline text-xs">Quantity</p>
+                          <p className="text-outline text-xs">
+                            {line.quantity !== undefined ? "Quantity" : "Area"}
+                          </p>
                           <p className="font-headline text-primary text-xl font-bold">
-                            {line.quantity}
+                            {line.quantity ?? line.area}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="text-outline text-xs">Price</p>
                           <p className="font-headline text-xl font-bold">
-                            ${line.service.price * line.quantity}
+                            ${line.service.price * (line.quantity ?? 1)}
                           </p>
                         </div>
                       </div>
@@ -299,6 +303,9 @@ export default function CheckoutPage() {
                   ))}
                 </div>
               </div>
+              <div>Total price: ${cartState.getPrice().toFixed(2)}</div>
+              <div>Total time: {cartState.getEstimatedTime()}</div>
+              <div>Requested cleaners: {cartState.requestedCleanerCount}</div>
             </div>
             <div>
               <div className="flex items-center gap-3">

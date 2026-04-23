@@ -39,7 +39,8 @@ export default async function ServicePage({ params }: { params: Promise<{ id: st
   const title = service.name || `Service #${service.id}`;
   const description = service.description || "No description available for this service.";
   const price = service.price;
-  const category = service.category.map((item) => item.name).join(", ") || service.type || "Service";
+  const category =
+    service.categories.map((item) => item.name).join(", ") || service.type || "Service";
   const mainImage: CleanImage | undefined = service.featuredImage || service.images?.[0];
   const galleryImages = service.images?.filter((image) => image.id !== mainImage?.id) ?? [];
 

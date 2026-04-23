@@ -6,6 +6,7 @@ export interface Service {
   categories: Category[];
   description: string;
   depedensOnArea: number | null;
+  priceForAdditionalMeter: number | null;
   featuredImage: CleanImage | null;
   images: CleanImage[];
   price: number;

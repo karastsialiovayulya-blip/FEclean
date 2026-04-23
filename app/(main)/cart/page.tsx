@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function CartLineItem({ cartLine }: { cartLine: CartLine }) {
-  const { service, quantity } = cartLine;
+  const { id, service, quantity, area } = cartLine;
   const cartState = cartStore();
 
   return (
@@ -39,29 +39,45 @@ function CartLineItem({ cartLine }: { cartLine: CartLine }) {
           <p className="line-clamp-2 text-lg font-thin text-gray-500">{service.description}</p>
         </div>
         <div className="flex items-end gap-3">
-          <div className="flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-gray-50 px-3 py-2">
-            <Button
-              onClick={() => cartState.decreaseQuantity(service.id)}
-              variant="outline"
-              className="items-center justify-center rounded-full bg-white shadow-sm"
-            >
-              <span className="text-xl">-</span>
-            </Button>
-            <span className="min-w-[24px] text-center text-base font-medium">{quantity}</span>
-            <Button
-              onClick={() => cartState.increaseQuantity(service.id)}
-              variant="outline"
-              className="items-center justify-center rounded-full bg-white shadow-sm"
-            >
-              <span className="text-xl">+</span>
-            </Button>
-          </div>
+          {quantity ? (
+            <div className="flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-gray-50 px-3 py-2">
+              <Button
+                onClick={() => cartState.decreaseQuantity(id)}
+                variant="outline"
+                className="items-center justify-center rounded-full bg-white shadow-sm"
+              >
+                <span className="text-xl">-</span>
+              </Button>
+              <span className="min-w-[24px] text-center text-base font-medium">{quantity}</span>
+              <Button
+                onClick={() => cartState.increaseQuantity(id)}
+                variant="outline"
+                className="items-center justify-center rounded-full bg-white shadow-sm"
+              >
+                <span className="text-xl">+</span>
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <Input
+                value={area}
+                onChange={(e) => {
+                  let newArea = Number(e.target.value);
+                  if (!Number.isNaN(newArea) && service.depedensOnArea) {
+                    if (newArea < service.depedensOnArea) newArea = service.depedensOnArea;
+                    if (newArea > 200) newArea = 200;
+                    cartState.changeArea(id, newArea);
+                  }
+                }}
+              />
+            </div>
+          )}
           <Button
             className="block flex items-center gap-2 px-3"
             size="normal"
             variant="destructive"
             onClick={() => {
-              cartState.removeService(service.id);
+              cartState.removeService(id);
             }}
           >
             <HugeiconsIcon icon={Delete02Icon} />
@@ -69,7 +85,7 @@ function CartLineItem({ cartLine }: { cartLine: CartLine }) {
           </Button>
         </div>
       </div>
-      <div className="text-2xl font-semibold">${service.price * quantity}</div>
+      <div className="text-2xl font-semibold">${cartState.getCartLinePrice(id).toFixed(2)}</div>
     </div>
   );
 }
@@ -113,7 +129,7 @@ export default function CartPage() {
           {cartState.cartLines.length > 0 ? (
             cartState.cartLines.map((cartLine) => (
               <CartLineItem
-                key={cartLine.service.id}
+                key={cartLine.id}
                 cartLine={cartLine}
               />
             ))
