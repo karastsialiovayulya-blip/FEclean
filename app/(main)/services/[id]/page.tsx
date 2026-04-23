@@ -1,7 +1,6 @@
-import { redirect } from "next/dist/server/api-utils";
 import Image from "next/image";
 import { getServiceById } from "@/lib/api/actions/service";
-import { CleanImage, Service } from "@/lib/types/types";
+import { CleanImage } from "@/lib/types/types";
 import ServicePageInteractive from "@/components/servicePageInteractive";
 import {
   Accordion,
@@ -18,7 +17,15 @@ function formatLabel(label: string) {
 }
 
 function renderValue(value: unknown) {
-  if (Array.isArray(value)) return value.join(", ");
+  if (Array.isArray(value)) {
+    return value
+      .map((item) =>
+        typeof item === "object" && item !== null && "name" in item
+          ? String((item as { name: string }).name)
+          : String(item),
+      )
+      .join(", ");
+  }
   if (typeof value === "object" && value !== null) return JSON.stringify(value);
   return String(value);
 }
@@ -32,7 +39,8 @@ export default async function ServicePage({ params }: { params: Promise<{ id: st
   const title = service.name || `Service #${service.id}`;
   const description = service.description || "No description available for this service.";
   const price = service.price;
-  const category = service.category || service.type || "Service";
+  const category =
+    service.categories.map((item) => item.name).join(", ") || service.type || "Service";
   const mainImage: CleanImage | undefined = service.featuredImage || service.images?.[0];
   const galleryImages = service.images?.filter((image) => image.id !== mainImage?.id) ?? [];
 

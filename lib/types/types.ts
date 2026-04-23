@@ -3,15 +3,21 @@ import { CartLine } from "@/lib/store/cartStore";
 export interface Service {
   id: number;
   name: string;
-  category?: string;
+  categories: Category[];
   description: string;
   depedensOnArea: number | null;
+  priceForAdditionalMeter: number | null;
   featuredImage: CleanImage | null;
   images: CleanImage[];
   price: number;
   time: number;
   type: string | null;
   requirments: ServiceRequirements[];
+}
+
+export interface Category {
+  id: number;
+  name: string;
 }
 
 export interface CleanImage {

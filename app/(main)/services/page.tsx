@@ -1,9 +1,6 @@
 import { Metadata } from "next";
-import Link from "next/link";
-import { getServices } from "@/lib/api/actions/service";
-import { Service } from "@/lib/types/types";
-import { Button } from "@/components/ui/button";
-import ImagesCarousel from "@/components/ui/imagesCarousel";
+import { getServices, getServicesCategoriesAPI } from "@/lib/api/actions/service";
+import ServiceFilters from "@/components/serviceFilters";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -12,6 +9,7 @@ export const metadata: Metadata = {
 
 export default async function Services() {
   const services = await getServices();
+  const categories = await getServicesCategoriesAPI();
 
   return (
     <div className="px-20 py-10">
@@ -25,48 +23,10 @@ export default async function Services() {
           Discover a level of clean that prioritizes your health and the environment.
         </p>
       </div>
-      <div className="flex w-full gap-5">
-        <div className="flex-1 bg-white p-5"></div>
-        {services ? (
-          <div className="grid w-[75%] auto-rows-fr grid-cols-3 gap-6">
-            {services.map((service: Service) => (
-              <div
-                key={service.id}
-                className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="overflow-hidden">
-                  <ImagesCarousel service={service} />
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <div className="flex items-start justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900 transition group-hover:text-green-700">
-                      {service.name}
-                    </h3>
-
-                    <div className="text-lg font-bold text-green-600">
-                      {service.depedensOnArea && "From "}
-                      {service.price}$
-                    </div>
-                  </div>
-                  <p className="mt-3 line-clamp-3 text-sm text-gray-500">{service.description}</p>
-                  <div className="mt-auto pt-5">
-                    <Link href={"/services/" + service.id}>
-                      <Button
-                        size="normal"
-                        className="w-full"
-                      >
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="w-[75%]">Something went wrong</div>
-        )}
-      </div>
+      <ServiceFilters
+        initialServices={services}
+        initialCategories={categories}
+      />
     </div>
   );
 }
