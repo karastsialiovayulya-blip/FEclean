@@ -1,5 +1,5 @@
 import { ApiEndpoints } from "@/lib/api/endpoint";
-import { Cleaner, MonthlyOrders, TotalStatistics } from "@/lib/types/types";
+import { Cleaner, MonthlyOrders, Order, TotalStatistics } from "@/lib/types/types";
 import { apiFetch } from "./apiFetch";
 
 export async function getTotalsAPI() {
@@ -33,6 +33,19 @@ export async function getTopCleanersAPI() {
 export async function getOrdersByMonthAPI() {
   try {
     const response = await apiFetch<MonthlyOrders[]>(ApiEndpoints.ANALYTICS_ORDERS_BY_MONTH, {
+      method: "GET",
+    });
+    if (response.ok) {
+      return response.data;
+    } else return [];
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function getRecentOrdersAPI() {
+  try {
+    const response = await apiFetch<Order[]>(ApiEndpoints.ANALYTICS_RECENT_ORDERS, {
       method: "GET",
     });
     if (response.ok) {

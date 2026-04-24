@@ -43,4 +43,5 @@ export const ApiEndpoints = {
   ANALYTICS_TOTAL: "/analytics/total",
   ANALYTICS_TOP_CLEANERS: "/analytics/top-cleaners",
   ANALYTICS_ORDERS_BY_MONTH: "/analytics/orders-per-month",
+  ANALYTICS_RECENT_ORDERS: "/analytics/recent-orders",
 };
