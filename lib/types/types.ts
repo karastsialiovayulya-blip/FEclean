@@ -99,3 +99,13 @@ export interface Order {
   requestedCleanerCount: number;
   address: string;
 }
+
+export interface TotalStatistics {
+  title: string;
+  subtitle: string;
+}
+
+export interface MonthlyOrders {
+  month: string;
+  orderCount: number;
+}

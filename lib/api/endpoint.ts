@@ -40,4 +40,7 @@ export const ApiEndpoints = {
   USER_ID: function (id: number) {
     return this.USERS + "/" + id;
   },
+  ANALYTICS_TOTAL: "/analytics/total",
+  ANALYTICS_TOP_CLEANERS: "/analytics/top-cleaners",
+  ANALYTICS_ORDERS_BY_MONTH: "/analytics/orders-per-month",
 };
