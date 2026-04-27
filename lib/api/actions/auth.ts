@@ -78,6 +78,27 @@ export async function SignUpCustomerAction(prevState: any, formData: FormData) {
   }
 }
 
+export async function SignUpCleanerAction(prevState: any, formData: FormData) {
+  try {
+    const data = Object.fromEntries(formData.entries());
+    const response = await apiFetch(ApiEndpoints.SIGN_UP_CLEANER, {
+      method: "POST",
+      body: data,
+    });
+
+    if (response.ok) {
+      const userData = response.data as UserAuthData;
+      await setTokenCoockie(userData.token);
+
+      return { success: true, user: userData.user };
+    }
+
+    return { success: false, error: response.error, message: response.message, user: null };
+  } catch (error) {
+    return { success: false, error: "Something went wrong", user: null };
+  }
+}
+
 export async function logoutAction() {
   const cookieStore = await cookies();
 

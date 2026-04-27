@@ -19,6 +19,7 @@ export const ApiEndpoints = {
   SIGN_IN: "/auth/sign-in",
   SIGN_UP: "/auth/sign-up",
   SIGN_UP_CUSTOMER: "/auth/sign-up/customer",
+  SIGN_UP_CLEANER: "/auth/sign-up/cleaner",
   ORDERS: "/orders",
   ORDERS_SLOTS: "/orders/available-slots",
   ORDERS_CUSTOMER: function (id: number) {
@@ -40,4 +41,8 @@ export const ApiEndpoints = {
   USER_ID: function (id: number) {
     return this.USERS + "/" + id;
   },
+  ANALYTICS_TOTAL: "/analytics/total",
+  ANALYTICS_TOP_CLEANERS: "/analytics/top-cleaners",
+  ANALYTICS_ORDERS_BY_MONTH: "/analytics/orders-per-month",
+  ANALYTICS_RECENT_ORDERS: "/analytics/recent-orders",
 };

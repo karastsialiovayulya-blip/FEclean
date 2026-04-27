@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   deleteServiceCategoryAPI,
+  deleteServicesAPI,
   getServices,
   getServicesCategoriesAPI,
 } from "@/lib/api/actions/service";
@@ -33,15 +34,8 @@ export default function Services() {
   const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
 
   const deleteServices = async () => {
-    const responce = await fetch("http://localhost:8080/services", {
-      method: "DELETE",
-      body: JSON.stringify(selectedServices),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (responce.ok) {
-      console.log("services deleted");
+    const responce = await deleteServicesAPI(selectedServices);
+    if (responce.success) {
     }
   };
 

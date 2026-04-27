@@ -42,6 +42,22 @@ export async function createService(prevState: any, dataToSend: any) {
   }
 }
 
+export async function deleteServicesAPI(ids: number[]) {
+  try {
+    const response = await apiFetch<Service>(ApiEndpoints.SERVICES, {
+      method: "DELETE",
+      body: ids,
+    });
+    return {
+      success: response.ok,
+      message: response.message,
+      ...(!response.ok && { error: response.error }),
+    };
+  } catch (e) {
+    return { success: false, message: "Something went wrong", error: (e as Error).message };
+  }
+}
+
 export async function editService(prevState: any, dataToSend: any) {
   try {
     const response = await apiFetch(ApiEndpoints.SERVICE_ID(dataToSend.id), {

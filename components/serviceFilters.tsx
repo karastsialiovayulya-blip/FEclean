@@ -8,7 +8,6 @@ import ImagesCarousel from "@/components/ui/imagesCarousel";
 import { Input } from "@/components/ui/input";
 
 type PricingFilter = "all" | "fixed" | "area-based";
-type InventoryFilter = "all" | "with-inventory" | "without-inventory";
 
 export default function ServiceFilters({
   initialServices,
