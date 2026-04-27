@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { getInventories } from "@/lib/api/actions/inventory";
+import { createServiceReq, deleteServiceReq } from "@/lib/api/actions/service";
 import { Inventory, Service } from "@/lib/types/types";
-import { cn } from "@/lib/utils";
 import { Delete02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -52,22 +53,9 @@ export default function AddInventoryPopupToService({
     if (!serviceReqId)
       setServiceReqs((prev) => prev.filter((req) => req.inventory.id !== inventoryId));
     else {
-      try {
-        const responce = await fetch(
-          "http://localhost:8080/services/requirements/" + serviceReqId,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (responce.ok) {
-          setServiceReqs((prev) => prev.filter((req) => req.inventory.id !== inventoryId));
-        }
-      } catch (error) {
-        return { success: false, error: "Something went wrong" };
-      }
+      const result = await deleteServiceReq(serviceReqId);
+      if (result.success)
+        setServiceReqs((prev) => prev.filter((req) => req.inventory.id !== inventoryId));
     }
   };
 
@@ -79,34 +67,18 @@ export default function AddInventoryPopupToService({
       requiredAmount: req.requiredAmount,
     }));
 
-    try {
-      const responce = await fetch("http://localhost:8080/services/requirements", {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (responce.ok) {
-        setIsPopupOpen(false);
-      }
-    } catch (error) {
-      return { success: false, error: "Something went wrong" };
-    }
+    const result = await createServiceReq(payload);
+    if (result.success) setIsPopupOpen(false);
+    else console.log(result.error);
   };
 
   useEffect(() => {
-    async function getInventories() {
-      const responce = await fetch("http://localhost:8080/inventory", {
-        method: "GET",
-      });
-      if (responce.ok) {
-        const data = await responce.json();
-        setInventories(data);
-        console.log(data);
-      }
+    async function getInventoriesAPI() {
+      const result = await getInventories();
+      setInventories(result);
     }
-    getInventories();
+    getInventoriesAPI();
+
     const existedReq: NewServiceReq[] = service.requirments.map((requirement) => ({
       id: requirement.id,
       service: service,

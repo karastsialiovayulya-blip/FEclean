@@ -1,9 +1,14 @@
 "use client";
+
+import { startTransition, useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logoutAction } from "@/lib/api/actions/auth";
+import { userStore } from "@/lib/store/userStore";
 import { cn } from "@/lib/utils";
-import { Logout01Icon, UserIcon } from "@hugeicons/core-free-icons";
+import { Logout01Icon, ShoppingCart02Icon, UserIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import CartPopup from "@/components/popups/cartPopup";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +18,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 export default function Header() {
   const pathname = usePathname();
+  const { user, isAuthenticated, logout } = userStore();
+  const [stateIn, logOutAction, isPending] = useActionState(logoutAction, null);
+
+  const logOut = () => {
+    startTransition(() => {
+      logOutAction();
+      logout();
+    });
+  };
 
   const links = [
     { href: "/", title: "Home" },
@@ -24,10 +39,7 @@ export default function Header() {
     { href: "/contact-us", title: "Contact us" },
   ];
 
-  const accLinks = [
-    { href: "/profile", title: "Profile" },
-    { href: "/profile/settings", title: "Settings" },
-  ];
+  const accLinks = [{ href: "/profile", title: "Profile" }];
 
   return (
     <header className="relative flex w-full items-center justify-between bg-white px-[10%] py-5">
@@ -50,43 +62,58 @@ export default function Header() {
           ))}
         </nav>
       </div>
-      <div className="z-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <HugeiconsIcon icon={UserIcon} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="text-sm">My Account</DropdownMenuLabel>
-              {accLinks.map((link, index) => (
-                <DropdownMenuItem key={index}>
-                  <Link
-                    href={link.href}
+      <div className="z-2 flex items-center gap-5">
+        <CartPopup />
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <HugeiconsIcon icon={UserIcon} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-sm">My Account</DropdownMenuLabel>
+                {accLinks.map((link, index) => (
+                  <DropdownMenuItem key={index}>
+                    <Link
+                      href={link.href}
+                      className="text-sm"
+                    >
+                      {link.title}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {user?.roles.includes("ROLE_ADMIN") && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      window.location.href = "/dashboard";
+                    }}
                     className="text-sm"
                   >
-                    {link.title}
-                  </Link>
+                    Dashboard
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem>
+                  <button
+                    className="flex items-center gap-1 text-sm text-red-500"
+                    onClick={logOut}
+                  >
+                    Log out <HugeiconsIcon icon={Logout01Icon} />
+                  </button>
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => {
-                  window.location.href = "/dashboard";
-                }}
-                className="text-sm"
-              >
-                Dashboard
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <button className="flex items-center gap-1 text-sm text-red-500">
-                  Log out <HugeiconsIcon icon={Logout01Icon} />
-                </button>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link href="/sign-in">Sign In</Link>
+            <Link href="/sign-up">
+              <Button className="px-3 py-4 text-base">Sign Up</Button>
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );

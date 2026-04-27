@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { startTransition, useActionState } from "react";
 import Image from "next/image";
-import { deleteImagesAction, uploadImageAction } from "@/lib/actions";
+import { deleteImagesAction, getImagesAPI, uploadImageAction } from "@/lib/api/actions/image";
 import { CleanImage } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
-Developmentimport MultipleDelete from "@/components/multipleDelete";
+import MultipleDelete from "@/components/multipleDelete";
 import EditMedia from "@/components/popups/editMedia";
 import { DashboardDescription } from "@/components/sections/heroSections";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,6 @@ export default function Media() {
       if (selectedImages.includes(id)) {
         setSelectedImages(selectedImages.filter((i) => i !== id));
       } else setSelectedImages((prevState) => [...prevState, id]);
-      console.log(selectedImages);
     } else setImageToEdit(images.find((image) => image.id === id) || false);
   };
 
@@ -44,10 +43,6 @@ export default function Media() {
     setPreview(URL.createObjectURL(e.target.files[0]));
   };
 
-  const cancelUploading = () => {
-    setPreview("");
-  };
-
   const deleteImages = async () => {
     startTransition(() => {
       deleteAction(selectedImages);
@@ -56,11 +51,8 @@ export default function Media() {
 
   useEffect(() => {
     async function getImages() {
-      const responce = await fetch("http://localhost:8080/uploads/images", { method: "GET" });
-      if (responce.ok) {
-        const imagesData = await responce.json();
-        setImages(imagesData);
-      }
+      const response = await getImagesAPI();
+      setImages(response);
     }
     getImages();
   }, [deleteState, state]);
@@ -145,7 +137,9 @@ export default function Media() {
                   variant="outline"
                   type="button"
                   className="flex-1 text-base"
-                  onClick={cancelUploading}
+                  onClick={() => {
+                    setPreview("");
+                  }}
                   size="normal"
                 >
                   Cancel

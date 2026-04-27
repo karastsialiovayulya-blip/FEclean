@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { getInventories } from "@/lib/api/actions/inventory";
 import { Inventory } from "@/lib/types/types";
 import { AnalyticsUpIcon, CleaningBucketIcon, Money01Icon } from "@hugeicons/core-free-icons";
 import MultipleDelete from "@/components/multipleDelete";
@@ -20,17 +21,11 @@ export default function InventoryPage() {
   const deleteInventory = () => {};
 
   useEffect(() => {
-    async function getInventories() {
-      const responce = await fetch("http://localhost:8080/inventory", {
-        method: "GET",
-      });
-      if (responce.ok) {
-        const data = await responce.json();
-        setInventories(data);
-        console.log(data);
-      }
+    async function getInventoriesAPI() {
+      const result = await getInventories();
+      setInventories(result);
     }
-    getInventories();
+    getInventoriesAPI();
   }, [isPopupOpen]);
 
   return (

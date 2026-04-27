@@ -1,0 +1,48 @@
+export const ApiEndpoints = {
+  SERVICES: "/services",
+  SERVICE_ID: function (id: string) {
+    return this.SERVICES + "/" + id;
+  },
+  SERVICE_CATEGORIES: "/categories",
+  SERVICE_CATEGORIES_ID: function (id: string) {
+    return this.SERVICE_CATEGORIES + "/" + id;
+  },
+  REQUIREMENTS: "/services/requirements",
+  REQUIREMENT_ID: function (id: number) {
+    return this.REQUIREMENTS + "/" + id;
+  },
+  INVENTORY: "/inventory",
+  INVENTORY_ID: function (id: number) {
+    return this.INVENTORY + "/" + id;
+  },
+  IMAGES: "/uploads/images",
+  SIGN_IN: "/auth/sign-in",
+  SIGN_UP: "/auth/sign-up",
+  SIGN_UP_CUSTOMER: "/auth/sign-up/customer",
+  SIGN_UP_CLEANER: "/auth/sign-up/cleaner",
+  ORDERS: "/orders",
+  ORDERS_SLOTS: "/orders/available-slots",
+  ORDERS_CUSTOMER: function (id: number) {
+    return this.ORDERS + "/customer/" + id;
+  },
+  ORDERS_CLEANER: function (id: number) {
+    return this.ORDERS + "/cleaner/" + id;
+  },
+  ORDERS_UNASSIGNED: function (id: number) {
+    return this.ORDERS + "/unassigned/" + id;
+  },
+  ORDER_ID_CLAIM: function (id: number) {
+    return this.ORDERS + "/" + id + "/claim";
+  },
+  ORDER_ID_STATUS: function (id: number) {
+    return this.ORDERS + "/" + id + "/change-status";
+  },
+  USERS: "/users",
+  USER_ID: function (id: number) {
+    return this.USERS + "/" + id;
+  },
+  ANALYTICS_TOTAL: "/analytics/total",
+  ANALYTICS_TOP_CLEANERS: "/analytics/top-cleaners",
+  ANALYTICS_ORDERS_BY_MONTH: "/analytics/orders-per-month",
+  ANALYTICS_RECENT_ORDERS: "/analytics/recent-orders",
+};
