@@ -16,8 +16,8 @@ import { Button } from "@/components/ui/button";
 export default function Home() {
   return (
     <>
-      <section className="flex px-20 py-20">
-        <div className="w-[55%]">
+      <section className="flex flex-col p-10 lg:flex lg:flex-row lg:p-20">
+        <div className="flex-3">
           <Button
             size="normal"
             variant="secondary"
@@ -25,14 +25,14 @@ export default function Home() {
           >
             Premium Clinical Care
           </Button>
-          <h1 className="text-9xl font-bold">
+          <h1 className="text-6xl font-bold md:text-7xl lg:text-9xl">
             The Science of <span className="text-primary">Pristine.</span>
           </h1>
-          <p className="mt-7 text-4xl">
+          <p className="mt-7 text-lg lg:text-4xl">
             Experience clinical-grade precision blended with botanical luxury. We don't just
             clean—we restore your home's natural equilibrium.
           </p>
-          <div className="mt-15 flex gap-5">
+          <div className="mt-5 flex gap-2 lg:mt-15 lg:gap-5">
             <Button
               size="normal"
               className="rounded-2xl px-10 py-5"
@@ -47,13 +47,13 @@ export default function Home() {
               View Menu
             </Button>
           </div>
-          <div className="py-10">
+          <div className="py-4 lg:py-10">
             <hr className="w-[50%] border" />
           </div>
           <h4>Trusted by 2,400+ luxury homeowners</h4>
         </div>
-        <div className="flex-schrink relative flex flex-1 justify-end">
-          <div className="h-[90%] w-[90%] rounded-2xl bg-white p-5 shadow-sm">
+        <div className="flex-schrink relative mt-3 flex flex-2 justify-end lg:m-0">
+          <div className="h-[70vh] w-[90%] rounded-2xl bg-white p-5 shadow-sm lg:h-[90%]">
             <div className="relative size-full">
               <Image
                 src="/hero-image.png"
@@ -74,8 +74,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="bg-white px-20 py-30">
-        <div className="flex items-end justify-between">
+      <section className="bg-white p-10 lg:px-20 lg:py-30">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between">
           <div>
             <Button
               size="normal"
@@ -84,20 +84,20 @@ export default function Home() {
             >
               Our Philosophy
             </Button>
-            <h2 className="text-6xl font-bold">
+            <h2 className="text-5xl font-bold lg:text-6xl">
               Beyond Clean.
               <br /> Clinical
               <br /> Excellence.
             </h2>
           </div>
-          <div className="w-[20%] border-l pl-2">
+          <div className="mt-3 w-full border-l pl-2 lg:mt-0 lg:w-[20%]">
             <p className="text-xl">
               Merging rigorous medical standards with environmental ethics to create unparalleled
               living sanctuaries.
             </p>
           </div>
         </div>
-        <div className="mt-20 grid grid-cols-3 gap-15">
+        <div className="mt-10 grid gap-15 md:mt-15 lg:mt-20 lg:grid-cols-3">
           <Card01
             title="Clinical Grade"
             description="We apply medical-grade cleaning protocols and color-coded microfiber systems to
@@ -125,7 +125,7 @@ export default function Home() {
           />
         </div>
       </section>
-      <section className="grid grid-cols-2 gap-20 px-20 py-20">
+      <section className="grid gap-20 p-10 lg:grid-cols-2 lg:p-20">
         <div className="grid grid-cols-2 gap-10">
           <div className="flex flex-col gap-10">
             <div className="relative aspect-square w-full">
@@ -173,13 +173,13 @@ export default function Home() {
             >
               Our Philosophy
             </Button>
-            <h2 className="text-6xl font-bold">
+            <h2 className="text-5xl font-bold lg:text-6xl">
               Your Home
               <br />
               Perfectly <br />
               Refined.
             </h2>
-            <p className="py-10 text-3xl">
+            <p className="py-10 text-xl md:text-2xl lg:text-3xl">
               We believe a clean home is the foundation of mental clarity. Our service goes beyond
               the visual, addressing the microscopic environment to improve air quality and sensory
               harmony.
@@ -208,7 +208,7 @@ export default function Home() {
       </section>
       <section className="bg-white px-30 py-30">
         <h3 className="mb-2 text-center font-light uppercase">The Journey</h3>
-        <h2 className="text-center text-6xl font-bold">The Path to Serenity</h2>
+        <h2 className="text-center text-5xl font-bold lg:text-6xl">The Path to Serenity</h2>
         <div className="mt-30 grid grid-cols-1 gap-8 px-4 md:grid-cols-3">
           <div className="flex flex-col items-center px-5 text-center">
             <div className="mb-7 rounded-2xl bg-green-800 p-5 text-white shadow-xl">

@@ -12,13 +12,13 @@ export default async function Services() {
   const categories = await getServicesCategoriesAPI();
 
   return (
-    <div className="px-20 py-10">
+    <div className="p-10 lg:p-20">
       <p>BREADCRUMBS</p>
-      <div className="w-[55%] py-8">
+      <div className="w-full py-8 lg:w-[55%]">
         <h1 className="text-6xl font-semibold">
           Curated Sanctuaries for <i className="text-secondary-foreground">Modern Living</i>
         </h1>
-        <p className="mt-5">
+        <p className="mt-5 text-xl">
           We combine clinical-grade sterilization protocols with a botanical, non-toxic ethos.
           Discover a level of clean that prioritizes your health and the environment.
         </p>

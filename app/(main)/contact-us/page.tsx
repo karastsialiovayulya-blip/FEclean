@@ -24,7 +24,7 @@ export default function ContactUs() {
         image="/minhome.jpg"
         highlight="conversation"
       />
-      <section className="mx-auto grid grid-cols-2 gap-8 p-6 px-[15%] py-20">
+      <section className="mx-auto grid gap-8 p-6 px-[10%] py-10 lg:grid-cols-2 lg:px-[15%] lg:py-20">
         <div className="flex flex-col gap-6">
           <ContactInfoCard
             icon={TelephoneIcon}
@@ -57,7 +57,7 @@ export default function ContactUs() {
         <div className="rounded-lg border border-gray-50 bg-white p-10 shadow-sm">
           <h2 className="mb-10 text-4xl font-bold text-[#1a1a1a]">Send a Message</h2>
           <form className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 lg:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm font-semibold tracking-wider text-gray-700 uppercase">
                   Full Name

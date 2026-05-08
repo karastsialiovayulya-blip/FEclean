@@ -17,8 +17,8 @@ export function HeroSection({ h1, p, image, upperH1, highlight }: HeroSectionPro
 
   return (
     <>
-      <section className="flex min-h-[90vh] px-20 py-30">
-        <div className="w-[45%]">
+      <section className="flex min-h-[90vh] flex-col-reverse p-10 lg:flex-row lg:p-10">
+        <div className="w-full lg:w-[45%]">
           <Button
             size="normal"
             variant="secondary"
@@ -40,10 +40,10 @@ export function HeroSection({ h1, p, image, upperH1, highlight }: HeroSectionPro
               ),
             )}
           </h1>
-          <p className="mt-7 text-3xl">{p}</p>
+          <p className="mt-7 text-xl md:text-2xl lg:text-3xl">{p}</p>
         </div>
-        <div className="relative flex flex-1 justify-end">
-          <div className="relative h-full w-[80%]">
+        <div className="relative my-5 flex flex-1 justify-end lg:my-0">
+          <div className="relative h-[70vh] w-full lg:h-full lg:w-[80%]">
             {image && (
               <Image
                 src={image}

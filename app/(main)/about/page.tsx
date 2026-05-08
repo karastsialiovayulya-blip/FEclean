@@ -17,7 +17,7 @@ export default function About() {
         image="/plant.webp"
         highlight="precision"
       />
-      <section className="grid grid-cols-2 gap-20 px-20 py-20">
+      <section className="grid gap-20 p-10 lg:grid-cols-2 lg:p-20">
         <div className="relative aspect-square w-full">
           <Image
             src="/cleaners.webp"
@@ -35,7 +35,7 @@ export default function About() {
             >
               Our Philosophy
             </Button>
-            <h2 className="text-6xl font-bold">Our Story</h2>
+            <h2 className="text-5xl lg:text-6xl">Our Story</h2>
             <p className="py-10 text-3xl">
               Lumina Clean began in a small garden studio, fueled by a simple frustration: why do
               the strongest cleaners smell like chemicals and damage our lungs? We spent years
@@ -50,10 +50,10 @@ export default function About() {
           </div>
         </div>
       </section>
-      <section className="bg-white px-30 py-30">
+      <section className="bg-white p-10 lg:p-30">
         <h3 className="mb-2 text-center font-light uppercase">The Pillars</h3>
-        <h2 className="text-center text-6xl font-bold">The Lumina Standard</h2>
-        <div className="mt-20 grid grid-cols-3 gap-15">
+        <h2 className="text-center text-5xl lg:text-6xl">The Lumina Standard</h2>
+        <div className="mt-20 grid gap-15 lg:grid-cols-3">
           <Card01
             title="Clinical Grade"
             description="We apply medical-grade cleaning protocols and color-coded microfiber systems to
