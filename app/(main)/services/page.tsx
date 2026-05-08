@@ -13,8 +13,7 @@ export default async function Services() {
 
   return (
     <div className="p-10 lg:p-20">
-      <p>BREADCRUMBS</p>
-      <div className="w-full py-8 lg:w-[55%]">
+      <div className="mb-8 w-full lg:w-[55%]">
         <h1 className="text-6xl font-semibold">
           Curated Sanctuaries for <i className="text-secondary-foreground">Modern Living</i>
         </h1>

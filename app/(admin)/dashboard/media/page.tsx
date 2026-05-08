@@ -13,11 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
+const MEDIA_PER_PAGE = 15;
+
 export default function Media() {
   const [preview, setPreview] = useState("");
   const [images, setImages] = useState<CleanImage[]>([]);
   const [state, formAction, isPending] = useActionState(uploadImageAction, null);
   const [deleteState, deleteAction, isDeletePending] = useActionState(deleteImagesAction, null);
+  const [currentPage, changePage] = useState(1);
   const [selectedImages, setSelectedImages] = useState<number[]>([]);
   const [isSelectedMode, setSelectedMode] = useState(false);
   const [imageToEdit, setImageToEdit] = useState<CleanImage | boolean>(false);
@@ -60,6 +63,12 @@ export default function Media() {
   useEffect(() => {
     if (state?.success) setPreview("");
   }, [state]);
+
+  const totalPages = Math.max(1, Math.ceil(images.length / MEDIA_PER_PAGE));
+  const paginatedImages = images.slice(
+    (currentPage - 1) * MEDIA_PER_PAGE,
+    currentPage * MEDIA_PER_PAGE,
+  );
 
   return (
     <div className="p-10">
@@ -156,9 +165,9 @@ export default function Media() {
         deleteSelected={deleteImages}
       />
       <div className="bg-background2 flex flex-col gap-3 rounded-lg p-5">
-        {images.length > 0 ? (
+        {paginatedImages.length > 0 ? (
           <div className="grid w-full grid-cols-5 gap-3">
-            {images.map((image: CleanImage) => (
+            {paginatedImages.map((image: CleanImage) => (
               <div
                 key={image.id}
                 className={cn(
@@ -181,6 +190,28 @@ export default function Media() {
         ) : (
           <div className="flex justify-center py-10">No images found</div>
         )}
+        <div className="flex items-center justify-between border-t border-slate-200 pt-6">
+          <p className="text-sm text-slate-500">
+            Page {currentPage} of {totalPages}
+          </p>
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              size="normal"
+              disabled={currentPage <= 1}
+              onClick={() => changePage(currentPage - 1)}
+            >
+              Previous
+            </Button>
+            <Button
+              size="normal"
+              disabled={currentPage >= totalPages}
+              onClick={() => changePage(currentPage + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
       {typeof imageToEdit !== "boolean" && (
         <EditMedia

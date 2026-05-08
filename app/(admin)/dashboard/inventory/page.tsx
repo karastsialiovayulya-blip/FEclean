@@ -11,12 +11,21 @@ import { DashboardDescription } from "@/components/sections/heroSections";
 import { Card02 } from "@/components/staticCards";
 import { Button } from "@/components/ui/button";
 
+const MEDIA_PER_PAGE = 5;
+
 export default function InventoryPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const [isSelectedMode, setSelectedMode] = useState(false);
   const [selectedInventory, setSelectedInventory] = useState<number[]>([]);
   const [inventoryToEdit, setInventoryToEdit] = useState<Inventory | null>(null);
+  const [currentPage, changePage] = useState(1);
+
+  const totalPages = Math.max(1, Math.ceil(inventories.length / MEDIA_PER_PAGE));
+  const paginatedInventories = inventories.slice(
+    (currentPage - 1) * MEDIA_PER_PAGE,
+    currentPage * MEDIA_PER_PAGE,
+  );
 
   const deleteInventory = () => {};
 
@@ -49,18 +58,6 @@ downtime."
           Add inventory
         </Button>
       </DashboardDescription>
-      <div className="grid grid-cols-3 gap-7 py-10">
-        <Card02
-          upper="Total SKU's"
-          title="35 Active"
-          icon={CleaningBucketIcon}
-        />
-        <Card02
-          upper="Most used"
-          title="Botanical"
-          icon={AnalyticsUpIcon}
-        />
-      </div>
       <MultipleDelete
         isSelectedMode={isSelectedMode}
         setSelectedMode={setSelectedMode}
@@ -69,7 +66,7 @@ downtime."
       />
       <div className="w-full rounded-lg border-2 bg-white p-4">
         <div className="flex flex-col gap-4">
-          {inventories.map((inventory: Inventory) => (
+          {paginatedInventories.map((inventory: Inventory) => (
             <div
               key={inventory.id}
               className="flex items-center justify-between gap-5 rounded-lg bg-white p-5"
@@ -123,6 +120,28 @@ downtime."
               </div>
             </div>
           ))}
+        </div>
+        <div className="flex items-center justify-between border-t border-slate-200 pt-6">
+          <p className="text-sm text-slate-500">
+            Page {currentPage} of {totalPages}
+          </p>
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              size="normal"
+              disabled={currentPage <= 1}
+              onClick={() => changePage(currentPage - 1)}
+            >
+              Previous
+            </Button>
+            <Button
+              size="normal"
+              disabled={currentPage >= totalPages}
+              onClick={() => changePage(currentPage + 1)}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
       {isPopupOpen && (
