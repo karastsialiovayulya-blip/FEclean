@@ -49,6 +49,12 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const totalPrice = cartState.getPrice();
+  const estimatedTime = cartState.getEstimatedTime();
+  const totalServices = cartState.cartLines.reduce(
+    (count, line) => count + (line.quantity ?? 1),
+    0,
+  );
 
   const formatLocalDateKey = (value: Date) => {
     const year = value.getFullYear();
@@ -63,6 +69,21 @@ export default function CheckoutPage() {
     const minutes = String(value.getMinutes()).padStart(2, "0");
     const seconds = String(value.getSeconds()).padStart(2, "0");
     return `${datePart}T${hours}:${minutes}:${seconds}`;
+  };
+
+  const formatDuration = (minutes: number) => {
+    if (minutes < 60) {
+      return `${minutes} min`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    if (remainingMinutes === 0) {
+      return `${hours} hr`;
+    }
+
+    return `${hours} hr ${remainingMinutes} min`;
   };
 
   const normalizeSlotDateTime = (value: string) => {
@@ -303,9 +324,60 @@ export default function CheckoutPage() {
                   ))}
                 </div>
               </div>
-              <div>Total price: ${cartState.getPrice().toFixed(2)}</div>
-              <div>Total time: {cartState.getEstimatedTime()}</div>
-              <div>Requested cleaners: {cartState.requestedCleanerCount}</div>
+              <div className="bg-primary/8 mt-8 overflow-hidden rounded-[28px] border border-emerald-100 to-white">
+                <div className="flex flex-col gap-6 p-6 lg:justify-between lg:p-8">
+                  <div className="max-w-lg">
+                    <p className="text-primary text-xs font-bold tracking-[0.22em] uppercase">
+                      Booking Snapshot
+                    </p>
+                    <h3 className="font-headline mt-3 text-2xl font-bold text-slate-900">
+                      Your visit is taking shape beautifully
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                      Review the full appointment estimate before you choose a date and confirm
+                      your cleaner team.
+                    </p>
+                  </div>
+                  <div className="grid flex-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm backdrop-blur">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
+                        Total Price
+                      </p>
+                      <p className="font-headline mt-3 text-3xl font-extrabold text-slate-900">
+                        ${totalPrice.toFixed(2)}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-500">Final checkout estimate</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm backdrop-blur">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
+                        Total Time
+                      </p>
+                      <p className="font-headline mt-3 text-3xl font-extrabold text-slate-900">
+                        {formatDuration(estimatedTime)}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-500">Adjusted for your crew size</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm backdrop-blur">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
+                        Services
+                      </p>
+                      <p className="font-headline mt-3 text-3xl font-extrabold text-slate-900">
+                        {totalServices}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-500">Selected service units</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/70 bg-white/90 p-4 shadow-sm backdrop-blur">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">
+                        Cleaner Team
+                      </p>
+                      <p className="font-headline mt-3 text-3xl font-extrabold text-slate-900">
+                        {cartState.requestedCleanerCount}
+                      </p>
+                      <p className="mt-2 text-sm text-slate-500">Requested cleaners on site</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-3">

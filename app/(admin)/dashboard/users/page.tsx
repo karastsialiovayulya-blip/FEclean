@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getUsersAPI } from "@/lib/api/actions/user";
+import { getUsersAPI, grantAdminRightsAPI } from "@/lib/api/actions/user";
 import { Role, User } from "@/lib/types/types";
 import { cn } from "@/lib/utils";
 import { DashboardDescription } from "@/components/sections/heroSections";
@@ -32,6 +32,8 @@ export default function Users() {
   const [activeTab, setActiveTab] = useState<UserTab>("ALL");
   const [pagesByTab, setPagesByTab] = useState<PaginationState>(INITIAL_PAGES);
   const [isLoading, setIsLoading] = useState(true);
+  const [pendingUserId, setPendingUserId] = useState<number | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -75,6 +77,24 @@ export default function Users() {
     }));
   };
 
+  const handleGrantAdmin = async (userId: number) => {
+    setPendingUserId(userId);
+    setStatusMessage(null);
+
+    const response = await grantAdminRightsAPI(userId);
+
+    if (response.success && response.user) {
+      setUsers((currentUsers) =>
+        currentUsers.map((user) => (user.id === userId ? response.user! : user)),
+      );
+      setStatusMessage(response.message || "Admin rights granted.");
+    } else {
+      setStatusMessage(response.message || "Could not grant admin rights.");
+    }
+
+    setPendingUserId(null);
+  };
+
   return (
     <div className="p-10">
       <DashboardDescription
@@ -83,24 +103,14 @@ export default function Users() {
         highlight="Access"
         h1="System Access Management"
       >
-        <div className="flex gap-4">
-          <Button
-            size="normal"
-            className="rounded-xl px-6 py-4 text-lg whitespace-normal"
-          >
-            Generate link for cleaner
-          </Button>
-          <Button
-            size="normal"
-            variant="secondary"
-            className="rounded-xl px-6 py-4 text-lg whitespace-normal"
-          >
-            Add admin
-          </Button>
-        </div>
       </DashboardDescription>
 
       <div className="mt-10 rounded-2xl bg-white p-8 shadow-sm">
+        {statusMessage ? (
+          <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {statusMessage}
+          </div>
+        ) : null}
         <div className="flex flex-wrap items-center gap-3">
           <div className="text-sm font-semibold tracking-wide text-slate-500 uppercase">Role</div>
           {USER_TABS.map((tab) => (
@@ -167,6 +177,22 @@ export default function Users() {
                         </span>
                       ))}
                     </div>
+                  </div>
+                  <div className="flex justify-end">
+                    {user.roles.includes("ROLE_ADMIN") ? (
+                      <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-emerald-700">
+                        Admin enabled
+                      </span>
+                    ) : (
+                      <Button
+                        size="normal"
+                        className="rounded-xl"
+                        disabled={pendingUserId === user.id}
+                        onClick={() => handleGrantAdmin(user.id)}
+                      >
+                        {pendingUserId === user.id ? "Granting..." : "Grant admin"}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

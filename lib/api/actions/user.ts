@@ -18,3 +18,19 @@ export async function getUsersAPI() {
     return [];
   }
 }
+
+export async function grantAdminRightsAPI(id: number) {
+  try {
+    const response = await apiFetch<User>(ApiEndpoints.USER_ID_GRANT_ADMIN(id), {
+      method: "POST",
+    });
+
+    if (response.ok) {
+      return { success: true, user: response.data, message: response.message };
+    }
+
+    return { success: false, user: null, message: response.error || response.message };
+  } catch (e) {
+    return { success: false, user: null, message: "Failed to grant admin rights." };
+  }
+}

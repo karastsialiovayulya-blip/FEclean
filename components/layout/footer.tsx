@@ -45,6 +45,14 @@ export default function Footer() {
           <ul className="flex flex-col gap-2">
             <li>
               <Link
+                href="/sign-up/cleaner"
+                className="text-gray-600"
+              >
+                Become a Cleaner
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/"
                 className="text-gray-600"
               >
