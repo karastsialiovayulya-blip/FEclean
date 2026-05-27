@@ -40,7 +40,7 @@ Shoppping cart:
 <img width="1812" height="955" alt="image" src="https://github.com/user-attachments/assets/0d845416-2b5f-4e74-8583-37d645a388c2" />
 
 Checkout page:
-<img width="1812" height="955" alt="image" src="https://github.com/user-attachments/assets/6ea5a67d-9187-48d9-ba09-3df4754f9447" />
+<img width="1838" height="945" alt="image" src="https://github.com/user-attachments/assets/ff8b2a55-141c-4c21-b107-c6ebc4682444" />
 
 Dachboard page:
 <img width="1812" height="955" alt="image" src="https://github.com/user-attachments/assets/20468ac5-0069-4b17-a8b1-25431e50ada3" />
