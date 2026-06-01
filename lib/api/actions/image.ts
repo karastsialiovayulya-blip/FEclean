@@ -8,6 +8,14 @@ export async function uploadImageAction(prevState: any, formData: FormData) {
     return null;
   }
 
+  const files = formData
+    .getAll("file")
+    .filter((file): file is File => file instanceof File && file.size > 0);
+
+  if (files.length === 0) {
+    return { success: false, message: "No files selected", error: "Select at least one image" };
+  }
+
   try {
     const response = await apiFetch(ApiEndpoints.IMAGES, {
       method: "POST",
@@ -16,7 +24,7 @@ export async function uploadImageAction(prevState: any, formData: FormData) {
     return {
       success: response.ok,
       message: response.message,
-      ...(!response.ok && { error: response.error }),
+      ...(!response.ok && { error: response.error || response.message || "Upload failed" }),
     };
   } catch (e) {
     return { success: false, message: "Something went wrong", error: (e as Error).message };

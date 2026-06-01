@@ -16,7 +16,7 @@ export default function BasePopup({
       className="fixed inset-0 flex h-screen w-full items-center justify-center bg-gray-700/20 backdrop-blur-sm"
     >
       <div
-        className={cn("max-h-80vh overflow-y-auto rounded-lg bg-white p-5", width)}
+        className={cn("max-h-[80vh] overflow-y-auto rounded-lg bg-white p-5", width)}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { deleteImagesAction, getImagesAPI, uploadImageAction } from "@/lib/api/actions/image";
 import { CleanImage } from "@/lib/types/types";
@@ -16,14 +15,28 @@ import { Input } from "@/components/ui/input";
 const MEDIA_PER_PAGE = 15;
 
 export default function Media() {
-  const [preview, setPreview] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [preview, setPreview] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [images, setImages] = useState<CleanImage[]>([]);
   const [state, formAction, isPending] = useActionState(uploadImageAction, null);
-  const [deleteState, deleteAction, isDeletePending] = useActionState(deleteImagesAction, null);
+  const [deleteState, deleteAction] = useActionState(deleteImagesAction, null);
   const [currentPage, changePage] = useState(1);
   const [selectedImages, setSelectedImages] = useState<number[]>([]);
   const [isSelectedMode, setSelectedMode] = useState(false);
   const [imageToEdit, setImageToEdit] = useState<CleanImage | boolean>(false);
+
+  const setUploadFiles = (nextFiles: File[]) => {
+    const imageFiles = nextFiles.filter((file) => file.type.startsWith("image/"));
+    setSelectedFiles(imageFiles);
+    setPreview(imageFiles.map((file) => URL.createObjectURL(file)));
+
+    if (fileInputRef.current) {
+      const dataTransfer = new DataTransfer();
+      imageFiles.forEach((file) => dataTransfer.items.add(file));
+      fileInputRef.current.files = dataTransfer.files;
+    }
+  };
 
   const onSelect = (id: number) => {
     if (isSelectedMode) {
@@ -35,15 +48,21 @@ export default function Media() {
 
   const onDrop = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      setPreview(URL.createObjectURL(file));
+    const nextFiles = Array.from(e.dataTransfer.files);
+    if (nextFiles.length) {
+      setUploadFiles(nextFiles);
     }
   };
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-    setPreview(URL.createObjectURL(e.target.files[0]));
+    if (!e.target.files?.length) return;
+    setUploadFiles(Array.from(e.target.files));
+  };
+
+  const resetUpload = () => {
+    setPreview([]);
+    setSelectedFiles([]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const deleteImages = async () => {
@@ -61,8 +80,14 @@ export default function Media() {
   }, [deleteState, state]);
 
   useEffect(() => {
-    if (state?.success) setPreview("");
+    if (state?.success) resetUpload();
   }, [state]);
+
+  useEffect(() => {
+    return () => {
+      preview.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [preview]);
 
   const totalPages = Math.max(1, Math.ceil(images.length / MEDIA_PER_PAGE));
   const paginatedImages = images.slice(
@@ -78,17 +103,17 @@ export default function Media() {
         upperH1="Media Management"
         highlight="Visual"
       >
-        <div className="mt-5 flex h-[20vh] w-full gap-5">
+        <div className="mt-5 flex min-h-[220px] w-full gap-5">
           <form
             action={formAction}
-            className="flex gap-3 rounded-lg border-2 bg-white p-3 text-base"
+            className="flex w-full gap-3 rounded-lg border-2 bg-white p-3 text-base"
           >
             <label
               onDragOver={(e) => e.preventDefault()}
               onDrop={onDrop}
               className={cn(
                 "flex w-[40%] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-white transition-colors hover:bg-gray-100",
-                preview && "hidden",
+                preview.length > 0 && "hidden",
               )}
             >
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -98,22 +123,32 @@ export default function Media() {
                 <p className="text-center text-xs text-gray-400">PNG, JPG or GIF (MAX. 2MB)</p>
               </div>
               <input
+                ref={fileInputRef}
                 onChange={onChangeInput}
                 id="dropzone-file"
                 type="file"
                 name="file"
+                multiple
                 className="hidden"
                 accept="image/*"
               />
             </label>
-            {preview && (
-              <div className="relative aspect-square h-full">
-                <Image
-                  src={preview}
-                  alt="Preview"
-                  fill={true}
-                  className="object-cover"
-                />
+            {preview.length > 0 && (
+              <div className="grid max-h-[220px] w-[40%] grid-cols-3 gap-2 overflow-y-auto">
+                {preview.map((src, index) => (
+                  <div
+                    key={`${src}-${index}`}
+                    className="relative aspect-square overflow-hidden rounded-lg bg-slate-100"
+                  >
+                    <Image
+                      src={src}
+                      alt={`Preview ${index + 1}`}
+                      fill={true}
+                      unoptimized
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
               </div>
             )}
             <div className="flex w-[50%] flex-col gap-3">
@@ -133,12 +168,17 @@ export default function Media() {
                 />
               </Field>
               {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
+              {selectedFiles.length > 0 && (
+                <p className="text-sm text-slate-500">
+                  {selectedFiles.length} {selectedFiles.length === 1 ? "image" : "images"} selected
+                </p>
+              )}
               <div className="flex gap-1">
                 <Button
                   type="submit"
                   className="flex-1 text-base"
                   size="normal"
-                  disabled={isPending}
+                  disabled={isPending || selectedFiles.length === 0}
                 >
                   {isPending ? "Uploading..." : "Upload"}
                 </Button>
@@ -146,9 +186,7 @@ export default function Media() {
                   variant="outline"
                   type="button"
                   className="flex-1 text-base"
-                  onClick={() => {
-                    setPreview("");
-                  }}
+                  onClick={resetUpload}
                   size="normal"
                 >
                   Cancel

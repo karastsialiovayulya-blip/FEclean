@@ -4,8 +4,13 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("jwt_token")?.value;
 
-  if (request.nextUrl.pathname.startsWith("/profile") && !token) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+  if (
+    request.nextUrl.pathname.startsWith("/profile") ||
+    request.nextUrl.pathname.startsWith("/dashboard")
+  ) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/sign-in", request.url));
+    }
   }
 
   return NextResponse.next();
